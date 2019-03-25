@@ -1,1 +1,1 @@
-
+Hi Yonathan, I realized that we forgot to exchange cell numbers today and so mine is 617-584-2180.  Just text me letting me know that you got this so that we can communicate.  (I'll delete this later)

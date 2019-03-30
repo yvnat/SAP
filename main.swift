@@ -1,5 +1,3 @@
-//Hi Yonathan, I realized that we forgot to exchange cell numbers today and so mine is 617-584-2180.  Just text me letting me know that you got this so that we can communicate.  (I'll delete this later)
-
 import Foundation
 import Darwin
 
@@ -12,12 +10,119 @@ func unicodeValueToCharacter(_ n: Int)->Character{
     return Character(UnicodeScalar(n)!)
 }
 
+var symbolsToStrings: [Int : String] = [:]
+var symbolsToInts: [Int : Int] = [:]
+func detectVariableString(code: [String], index: Int)->String{
+    var currentIndex = index
+    let stopIndex = Int(code[index])!
+    if symbolsToStrings[index] != nil {return symbolsToStrings[index]!}
+    else {
+        var variable = ""
+        while currentIndex != (stopIndex + index) {
+            let currentLine = Int(code[currentIndex])!
+            variable += String(unicodeValueToCharacter(currentLine))
+            currentIndex += 1
+        }
+        symbolsToStrings[index] = variable
+    }
+    return symbolsToStrings[index]!
+}
+func detectVariableInt(code: [String], index: Int)->Int{
+    if symbolsToInts[index] != nil {return symbolsToInts[index]!}
+    else {
+        let currentLine = Int(code[index])!
+        symbolsToInts[index] = currentLine
+    }
+    return symbolsToInts[index]!
+}
+func doTest(code: [String]){
+    var registers: [Int] = Array(repeating: 0, count: 10)
+    let startOfProgram = Int(code[1])!
+    var intLine = 0
+    var indexLine = startOfProgram + 2
+    var compare = false
+    //stores program length
+    symbolsToInts[0] = Int(code[0])!
+    while indexLine != code.count {
+        let currentLine = Int(code[indexLine])!
+                //Then run the program from 2nd line number (starting code line):
+                intLine = Int(code[indexLine])!
+                let nextLine = Int(code[indexLine + 1])!
+                let nextNextLine = Int(code[indexLine + 2])!
+        
+        //DEBUGGING:
+                print(intLine)
+        
+                switch intLine {
+                case 0:
+                    //halt
+                    exit(0)
+                case 6:
+                    //movrr
+                    registers[nextNextLine] = registers[nextLine]
+                    indexLine += 2
+                case 8:
+                    //movmr
+                    registers[nextNextLine] = detectVariableInt(code: code, index: nextLine)
+                    indexLine += 2
+                case 12:
+                    //addir
+                    registers[nextNextLine] += nextLine
+                    indexLine += 2
+                case 13:
+                    //addrr
+                    registers[nextNextLine] += registers[nextLine]
+                    indexLine += 2
+                case 34:
+                    //cmprr
+                    if registers[nextLine] < registers[nextNextLine] {compare = false}
+                    else {compare = true}
+                    indexLine += 2
+                case 45:
+                    //outcr
+                    print(registers[nextLine])
+                    indexLine += 1
+                case 49:
+                    //printi
+                    print(registers[nextLine])
+                    indexLine += 1
+                case 55:
+                    //outs
+                    print(detectVariableString(code: code, index: nextLine))
+                    indexLine += 1
+                case 57:
+                    //jmpne
+                    //if compare was not equal:
+                    if compare == false {
+                        //find label of Do01 and set indexLine equal to that
+                        indexLine = nextLine + 1
+                    }
+                default:
+                    print("Unknown Command")
+                }
+                /*We may use this later:
+                 let words = line.components(separatedBy: " ")
+                 print("\(words[0]) is \(words[1]) and likes \(words[4])")
+                 */
+        indexLine += 1
+    }
+}
+
 func readFromFile(path: String?){
     if let filePath = path {
         do {
-            let contents = try String(contentsOfFile: filePath)
-            let lines = contents.components(separatedBy: "\n")
-            doTest(code: lines)
+            //let contents = try String(contentsOfFile: filePath)
+            //let lines = contents.components(separatedBy: "\n")
+            
+            let testLines: [Int] = [79,43,0,20,10,26,65,32,80,114,111,103,114,97,109,32,84,111,32,80,114,105,110,116,32,68,111,117,98,108,101,115,12,32,68,111,117,98,108,101,100,32,105,115,32,8,0,8,8,1,9,8,2,0,55,3,45,0,6,8,1,13,8,1,49,8,55,30,49,1,45,0,34,8,9,12,1,8,57,56,0]
+            var testLines2: [String] = []
+            var index = 0
+            while index != testLines.count {
+                testLines2.append("\(testLines[index])")
+                index += 1
+            }
+            
+            doTest(code: testLines2)
         }
         catch {
             print("Contents Failed To Load")
@@ -28,78 +133,6 @@ func readFromFile(path: String?){
     }
 }
 
-func doTest(code: [String]){
-    var registers: [Int] = []
-    var symbolsToValues: [Int : Int] = [:]
-    var startOfProgram = 0
-    var intLine = 0
-    var indexLine = 0
-    var compare = false
-    while indexLine != code.count {
-        let currentLine = Int(code[indexLine])!
-        //Detect all variables first:
-        if indexLine == 0 {symbolsToValues[0] = currentLine} else {
-            if indexLine == 1 {startOfProgram = currentLine} else {
-                //Btw Yonathan, this is the only part that isn't quite right, I think everything else should be fine so please work on this.  It just adds every value from the start until it reaches the start of program line, thus each letter in a string will just save as a new variable integer in the symbolsToValues dictionary.  We need to figure out how to detect when the integer variables are done and we're moving on to the string variables.  Text me if you have any questions.
-                //if program hasn't started yet (just adding variables):
-                if indexLine < startOfProgram + 2 {
-                    
-                    symbolsToValues[indexLine] = currentLine
-                    
-                } else {
-                    //Then run the program from 2nd line number (starting code line):
-                    let nextLine = Int(code[indexLine + 1])!
-                    let nextNextLine = Int(code[indexLine + 2])!
-                    switch intLine {
-                    case 0:
-                    //halt
-                    exit(0)
-                    case 6:
-                        //movrr
-                        registers[nextNextLine] = registers[nextLine]
-                    case 8:
-                        //movmr
-                        registers[nextNextLine] = symbolsToValues[nextLine]!
-                    case 12:
-                        //addir
-                        registers[nextNextLine] += nextLine
-                    case 13:
-                        //addrr
-                        registers[nextNextLine] += registers[nextLine]
-                    case 34:
-                        //cmprr
-                        if registers[nextLine] < registers[nextNextLine] {compare = false}
-                        else {compare = true}
-                    case 45:
-                        //outcr
-                        print(nextLine)
-                    case 49:
-                        //printi
-                        print(registers[nextLine])
-                    case 55:
-                        //outs
-                        print(symbolsToValues[nextLine]!)
-                    case 57:
-                        //jmpne
-                        //if compare was not equal:
-                        if compare == false {
-                            //find label of Do01 and set indexLine equal to that
-                            indexLine = nextLine + 1
-                        }
-                    default:
-                        print("Unknown Command")
-                    }
-                /*We may use this later:
-                 let words = line.components(separatedBy: " ")
-                 print("\(words[0]) is \(words[1]) and likes \(words[4])")
-                 */
-                }
-            }
-        }
-        indexLine += 1
-    }
-}
-
 //TEST CODE:
-let path = Bundle.main.path(forResource: "test", ofType: "txt")
-readFromFile(path: path)
+//let path = Bundle.main.path(forResource: "test", ofType: "txt")
+readFromFile(path: "Doubles.txt")

@@ -30,7 +30,7 @@ func readFromFile(path: String?){
 
 func doTest(code: [String]){
     var registers: [Int] = []
-    var symbolsToValues: [Int : Character] = [:]
+    var symbolsToValues: [Int : Int] = [:]
     var startOfProgram = 0
     var intLine = 0
     var indexLine = 0
@@ -41,8 +41,12 @@ func doTest(code: [String]){
         if indexLine == 0 {symbolsToValues[0] = currentLine} else {
             if indexLine == 1 {startOfProgram = currentLine} else {
                 //Btw Yonathan, this is the only part that isn't quite right, I think everything else should be fine so please work on this.  It just adds every value from the start until it reaches the start of program line, thus each letter in a string will just save as a new variable integer in the symbolsToValues dictionary.  We need to figure out how to detect when the integer variables are done and we're moving on to the string variables.  Text me if you have any questions.
-                if indexLine < startOfProgram + 2 {symbolsToValues[indexLine] = currentLine} else {
+                //if program hasn't started yet (just adding variables):
+                if indexLine < startOfProgram + 2 {
                     
+                    symbolsToValues[indexLine] = currentLine
+                    
+                } else {
                     //Then run the program from 2nd line number (starting code line):
                     let nextLine = Int(code[indexLine + 1])!
                     let nextNextLine = Int(code[indexLine + 2])!
@@ -55,7 +59,7 @@ func doTest(code: [String]){
                         registers[nextNextLine] = registers[nextLine]
                     case 8:
                         //movmr
-                        registers[nextNextLine] = symbolsToValues[nextLine]
+                        registers[nextNextLine] = symbolsToValues[nextLine]!
                     case 12:
                         //addir
                         registers[nextNextLine] += nextLine

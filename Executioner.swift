@@ -104,7 +104,7 @@ class Executioner {
             //if compare was not equal:
             if compare != 0 {
                 //find label of Do01 and set indexLine equal to that
-                currentLine = memory[line + 1];
+                currentLine = memory[line + 1] - 2;
             }
             return false;
         default:

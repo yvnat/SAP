@@ -51,10 +51,10 @@ func doTest(code: [String]){
         intLine = Int(code[indexLine])!
         let nextLine = Int(code[indexLine + 1])!
         let nextNextLine = Int(code[indexLine + 2])!
-        
+
         //DEBUGGING:
         print(intLine)
-        
+
         switch intLine {
         case 0:
             //halt
@@ -116,14 +116,14 @@ func readFromFile(path: String?){
         do {
             let contents = try String(contentsOfFile: filePath)
             let lines = contents.components(separatedBy: "\n")
-            //let testLines: [Int] = [79,43,0,20,10,26,65,32,80,114,111,103,114,97,109,32,84,111,32,80,114,105,110,116,32,68,111,117,98,108,101,115,12,32,68,111,117,98,108,101,100,32,105,115,32,8,0,8,8,1,9,8,2,0,55,3,45,0,6,8,1,13,8,1,49,8,55,30,49,1,45,0,34,8,9,12,1,8,57,56,0]
-            //var testLines2: [String] = []
-            //var index = 0
-            //while index != testLines.count {
-                //testLines2.append("\(testLines[index])")
-                //index += 1
-            //}
- 
+            // let testLines: [Int] = [79,43,0,20,10,26,65,32,80,114,111,103,114,97,109,32,84,111,32,80,114,105,110,116,32,68,111,117,98,108,101,115,12,32,68,111,117,98,108,101,100,32,105,115,32,8,0,8,8,1,9,8,2,0,55,3,45,0,6,8,1,13,8,1,49,8,55,30,49,1,45,0,34,8,9,12,1,8,57,56,0]
+            // var lines: [String] = []
+            // var index = 0
+            // while index != testLines.count {
+            //     lines.append("\(testLines[index])")
+            //     index += 1
+            // }
+
             let executioner = Executioner();
             executioner.loadProgram(lines);
             executioner.execute();
@@ -138,4 +138,4 @@ func readFromFile(path: String?){
 }
 
 //TEST CODE:
-readFromFile(path: "/Users/andrewstadnicki/Desktop/Final Project Sap/Final Project Sap/Doubles.txt")
+readFromFile(path: "Doubles.txt")

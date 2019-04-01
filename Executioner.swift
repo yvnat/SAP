@@ -12,10 +12,10 @@ class Executioner {
     //having them be a member of the class is more accurate to real world (not necessarily in a good way)
     //memory holds program
     var memory: [Int] = [];
-    
+
     //shortcut for accessing strings
     var symbolsToStrings: [Int : String] = [:]
-    
+
     //this takes a [string] program, clears memory, and puts program into memory as [int]
     func loadProgram(_ program: [String]) {
         memory.removeAll();
@@ -28,7 +28,7 @@ class Executioner {
             memory.append(stringToInstruction!);
         }
     }
-    
+
     func getStringFromLocation(_ pointer: Int) -> String {
         if symbolsToStrings[pointer] != nil {
             return symbolsToStrings[pointer]!
@@ -46,10 +46,11 @@ class Executioner {
         symbolsToStrings[pointer] = string
         return symbolsToStrings[pointer]!
     }
-    
+
     //this executes one specific line
     //returns true on halt, false otherwise
     func executeLine(_ line: Int)->Bool {
+      // print("executing line \(line)")
         //return false if halt
         if (memory[line] == 0) {
             return true
@@ -86,17 +87,17 @@ class Executioner {
             return false;
         case 45:
             //outcr
-            print(unicodeValueToCharacter(registers[memory[line + 1]])) //prints it as a character, not a number
+            print(unicodeValueToCharacter(registers[memory[line + 1]]), terminator: "") //prints it as a character, not a number
             currentLine += 1
             return false;
         case 49:
             //printi
-            print(registers[memory[line + 1]])
+            print(String(registers[memory[line + 1]]), terminator: "")
             currentLine += 1
             return false;
         case 55:
             // outs
-            print(getStringFromLocation(memory[line + 1]))
+            print("\"" + getStringFromLocation(memory[line + 1]) + "\"", terminator: "")
             currentLine += 1
             return false
         case 57:
@@ -104,15 +105,15 @@ class Executioner {
             //if compare was not equal:
             if compare != 0 {
                 //find label of Do01 and set indexLine equal to that
-                currentLine = memory[line + 1] - 2;
+                currentLine = memory[line + 1] - 1;
             }
             return false;
         default:
-            print("Unknown Command")
+            print("ERROR Unknown instruction \"\(memory[line])\" at line \(line)")
         }
         return false;
     }
-    
+
     //this executes whatever is currently in memory
     func execute() {
         //if a program doesn't even have a length and a pointer to begin, you got a problem

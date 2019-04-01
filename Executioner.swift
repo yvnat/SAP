@@ -22,7 +22,7 @@ class Executioner {
         for i in program {
             let stringToInstruction: Int? = Int(i)
             if (stringToInstruction == nil) {
-                print("FATAL ERROR LOADING PROGRAM: Invalid instruction (\"\(i)\")");
+                //print("FATAL ERROR LOADING PROGRAM: Invalid instruction (\"\(i)\")");
                 return;
             }
             memory.append(stringToInstruction!);

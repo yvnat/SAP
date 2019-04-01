@@ -36,10 +36,8 @@ class Executioner {
         var currentIndex = pointer + 3
         //plus 3 was to account for the two variables at the beginning and the beggining index of 0 in the memory array
         let stopIndex = memory[pointer + 2] + pointer + 3
-        //print("memory pointer \(memory[pointer + 2])")
         var string = ""
         while currentIndex != stopIndex {
-            //print(currentIndex)
             string += String(unicodeValueToCharacter(memory[currentIndex]))
             currentIndex += 1
         }
@@ -50,7 +48,6 @@ class Executioner {
     //this executes one specific line
     //returns true on halt, false otherwise
     func executeLine(_ line: Int)->Bool {
-      // print("executing line \(line)")
         //return false if halt
         if (memory[line] == 0) {
             return true

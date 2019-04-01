@@ -36,79 +36,77 @@ func detectVariableInt(code: [String], index: Int)->Int{
     return symbolsToInts[index]!
 }
 /*
-func doTest(code: [String]){
-    print("Beginning execution");
-    var registers: [Int] = Array(repeating: 0, count: 10)
-    let startOfProgram = Int(code[1])!
-    var intLine = 0
-    var indexLine = startOfProgram + 2
-    var compare = false
-    //stores program length
-    symbolsToInts[0] = Int(code[0])!
-    while indexLine != code.count {
-        let currentLine = Int(code[indexLine])!
-        //Then run the program from 2nd line number (starting code line):
-        intLine = Int(code[indexLine])!
-        let nextLine = Int(code[indexLine + 1])!
-        let nextNextLine = Int(code[indexLine + 2])!
-
-        //DEBUGGING:
-        print(intLine)
-
-        switch intLine {
-        case 0:
-            //halt
-            return;
-        case 6:
-            //movrr
-            registers[nextNextLine] = registers[nextLine]
-            indexLine += 2
-        case 8:
-            //movmr
-            registers[nextNextLine] = detectVariableInt(code: code, index: nextLine)
-            indexLine += 2
-        case 12:
-            //addir
-            registers[nextNextLine] += nextLine
-            indexLine += 2
-        case 13:
-            //addrr
-            registers[nextNextLine] += registers[nextLine]
-            indexLine += 2
-        case 34:
-            //cmprr
-            if registers[nextLine] < registers[nextNextLine] {compare = false}
-            else {compare = true}
-            indexLine += 2
-        case 45:
-            //outcr
-            print(registers[nextLine])
-            indexLine += 1
-        case 49:
-            //printi
-            print(registers[nextLine])
-            indexLine += 1
-        case 55:
-            //outs
-            print(detectVariableString(code: code, index: nextLine))
-            indexLine += 1
-        case 57:
-            //jmpne
-            //if compare was not equal:
-            if compare == false {
-                //find label of Do01 and set indexLine equal to that
-                indexLine = nextLine + 1
-            }
-        default:
-            print("Unknown Command")
-        }
-        /*We may use this later:
-         let words = line.components(separatedBy: " ")
-         print("\(words[0]) is \(words[1]) and likes \(words[4])")
-         */
-        indexLine += 1
-    }
-}
+ func doTest(code: [String]){
+ print("Beginning execution");
+ var registers: [Int] = Array(repeating: 0, count: 10)
+ let startOfProgram = Int(code[1])!
+ var intLine = 0
+ var indexLine = startOfProgram + 2
+ var compare = false
+ //stores program length
+ symbolsToInts[0] = Int(code[0])!
+ while indexLine != code.count {
+ let currentLine = Int(code[indexLine])!
+ //Then run the program from 2nd line number (starting code line):
+ intLine = Int(code[indexLine])!
+ let nextLine = Int(code[indexLine + 1])!
+ let nextNextLine = Int(code[indexLine + 2])!
+ //DEBUGGING:
+ print(intLine)
+ switch intLine {
+ case 0:
+ //halt
+ return;
+ case 6:
+ //movrr
+ registers[nextNextLine] = registers[nextLine]
+ indexLine += 2
+ case 8:
+ //movmr
+ registers[nextNextLine] = detectVariableInt(code: code, index: nextLine)
+ indexLine += 2
+ case 12:
+ //addir
+ registers[nextNextLine] += nextLine
+ indexLine += 2
+ case 13:
+ //addrr
+ registers[nextNextLine] += registers[nextLine]
+ indexLine += 2
+ case 34:
+ //cmprr
+ if registers[nextLine] < registers[nextNextLine] {compare = false}
+ else {compare = true}
+ indexLine += 2
+ case 45:
+ //outcr
+ print(registers[nextLine])
+ indexLine += 1
+ case 49:
+ //printi
+ print(registers[nextLine])
+ indexLine += 1
+ case 55:
+ //outs
+ print(detectVariableString(code: code, index: nextLine))
+ indexLine += 1
+ case 57:
+ //jmpne
+ //if compare was not equal:
+ if compare == false {
+ //find label of Do01 and set indexLine equal to that
+ indexLine = nextLine + 1
+ }
+ default:
+ print("Unknown Command")
+ }
+ /*We may use this later:
+ let words = line.components(separatedBy: " ")
+ print("\(words[0]) is \(words[1]) and likes \(words[4])")
+ */
+ indexLine += 1
+ }
+ }
  */
 
 func readFromFile(path: String?){
@@ -123,7 +121,6 @@ func readFromFile(path: String?){
             //     lines.append("\(testLines[index])")
             //     index += 1
             // }
-
             let executioner = Executioner();
             executioner.loadProgram(lines);
             executioner.execute();
@@ -138,4 +135,4 @@ func readFromFile(path: String?){
 }
 
 //TEST CODE:
-readFromFile(path: "Doubles.txt")
+readFromFile(path: "/Users/andrewstadnicki/Desktop/Final Project Sap/Final Project Sap/Doubles.txt")

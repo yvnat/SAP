@@ -33,7 +33,7 @@ class Executioner {
         if symbolsToStrings[pointer] != nil {
             return symbolsToStrings[pointer]!
         }
-        var currentIndex = pointer + 2
+        var currentIndex = pointer + 3
         //plus 3 was to account for the two variables at the beginning and the beggining index of 0 in the memory array
         let stopIndex = memory[pointer + 2] + pointer + 3
         //print("memory pointer \(memory[pointer + 2])")
@@ -97,7 +97,7 @@ class Executioner {
             return false;
         case 55:
             // outs
-            print("\"" + getStringFromLocation(memory[line + 1]) + "\"", terminator: "")
+            print(getStringFromLocation(memory[line + 1]), terminator: "")
             currentLine += 1
             return false
         case 57:

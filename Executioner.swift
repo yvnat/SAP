@@ -3,22 +3,22 @@
 class Executioner {
     //the registers
     var registers: [Int] = Array(repeating: 0, count: 10)
-    var compare = 0;  //positive if bigger, negative if smaller, 0 if equal
+    var compare = 0  //positive if bigger, negative if smaller, 0 if equal
     //a pointer to the current memory block being executed
-    var currentLine = 0;
+    var currentLine = 0
     //the length of the current program
-    var programLength = 0;
+    var programLength = 0
     //it would be more valid to have these be local to the execute function, but
     //having them be a member of the class is more accurate to real world (not necessarily in a good way)
     //memory holds program
-    var memory: [Int] = [];
+    var memory: [Int] = []
 
     //shortcut for accessing strings
     var symbolsToStrings: [Int : String] = [:]
 
     //this takes a [string] program, clears memory, and puts program into memory as [int]
     func loadProgram(_ program: [String]) {
-        memory.removeAll();
+        memory.removeAll()
         for i in program {
             let stringToInstruction: Int? = Int(i)
             if (stringToInstruction == nil) {

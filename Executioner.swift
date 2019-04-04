@@ -12,10 +12,10 @@ class Executioner {
     //having them be a member of the class is more accurate to real world (not necessarily in a good way)
     //memory holds program
     var memory: [Int] = []
-
+    
     //shortcut for accessing strings
     var symbolsToStrings: [Int : String] = [:]
-
+    
     //this takes a [string] program, clears memory, and puts program into memory as [int]
     func loadProgram(_ program: [String]) {
         memory.removeAll()
@@ -28,7 +28,7 @@ class Executioner {
             memory.append(stringToInstruction!);
         }
     }
-
+    
     func getStringFromLocation(_ pointer: Int) -> String {
         if symbolsToStrings[pointer] != nil {
             return symbolsToStrings[pointer]!
@@ -44,7 +44,7 @@ class Executioner {
         symbolsToStrings[pointer] = string
         return symbolsToStrings[pointer]!
     }
-
+    
     //this executes one specific line
     //returns true on halt, false otherwise
     func executeLine(_ line: Int)->Bool {
@@ -57,9 +57,33 @@ class Executioner {
         //I didn't make variables with those names so it doesn't cause crashes when
         //trying to access things outside memory if no arguments are needed for the instruction
         switch memory[line] {
+        case 1:
+            //clrr
+            registers[memory[line + 1]] = 0
+            currentLine += 1
+            return false
+        case 2:
+            //clrx
+            break
+        case 3:
+            //clrm
+            break
+        case 4:
+            //clrb
+            break
+        case 5:
+            //movir
+            registers[memory[line + 2]] = registers[memory[line + 1]]
+            currentLine += 2
+            return false
         case 6:
             //movrr
             registers[memory[line + 2]] = registers[memory[line + 1]]
+            currentLine += 2
+            return false
+        case 7:
+            //movrm
+            memory[memory[line + 2]] = registers[memory[line + 1]]
             currentLine += 2
             return false
         case 8:
@@ -67,6 +91,15 @@ class Executioner {
             registers[memory[line + 2]] = memory[memory[line + 1] + 2]
             currentLine += 2
             return false;
+        case 9:
+            //movxr
+            break
+        case 10:
+            //movar
+            break
+        case 11:
+            //movb
+            break
         case 12:
             //addir
             registers[memory[line + 2]] += memory[line + 1]
@@ -77,25 +110,166 @@ class Executioner {
             registers[memory[line + 2]] += registers[memory[line + 1]]
             currentLine += 2
             return false;
+        case 14:
+            //addmr
+            registers[memory[line + 2]] += memory[memory[line + 1]]
+            currentLine += 2
+            return false
+        case 15:
+            //addxr
+            break
+        case 16:
+            //subir
+            registers[memory[line + 2]] -= memory[line + 1]
+            currentLine += 2
+            return false
+        case 17:
+            //subrr
+            registers[memory[line + 2]] -= registers[memory[line + 1]]
+            currentLine += 2
+            return false
+        case 18:
+            //submr
+            registers[memory[line + 2]] -= memory[memory[line + 1]]
+            currentLine += 2
+            return false
+        case 19:
+            //subxr
+            break
+        case 20:
+            //mulir
+            registers[memory[line + 2]] *= memory[line + 1]
+            currentLine += 2
+            return false
+        case 21:
+            //mulrr
+            registers[memory[line + 2]] *= registers[memory[line + 1]]
+            currentLine += 2
+            return false
+        case 22:
+            //mulmr
+            registers[memory[line + 2]] *= memory[memory[line + 1]]
+            currentLine += 2
+            return false
+        case 23:
+            //mulxr
+            break
+        case 24:
+            //divir
+            registers[memory[line + 2]] /= memory[line + 1]
+            currentLine += 2
+            return false
+        case 25:
+            //divrr
+            registers[memory[line + 2]] /= registers[memory[line + 1]]
+            currentLine += 2
+            return false
+        case 26:
+            //divmr
+            registers[memory[line + 2]] /= memory[memory[line + 1]]
+            currentLine += 2
+            return false
+        case 27:
+            //divxr
+            break
+        case 28:
+            //jmp
+            currentLine = memory[line + 1] - 1
+            return false
+        case 29:
+            //sojz
+            break
+        case 30:
+            //sojnz
+            break
+        case 31:
+            //aojz
+            break
+        case 32:
+            //aojnz
+            break
+        case 33:
+            //cmpir
+            break
         case 34:
             //cmprr
             compare = registers[memory[line + 1]] - registers[memory[line + 2]];
             currentLine += 2
             return false;
+        case 35:
+            //cmpmr
+            break
+        case 36:
+            //jmpn
+            break
+        case 37:
+            //jmpz
+            break
+        case 38:
+            //jmpp
+            break
+        case 39:
+            //jsr
+            break
+        case 40:
+            //ret
+            break
+        case 41:
+            //push
+            break
+        case 42:
+            //pop
+            break
+        case 43:
+            //stackc
+            break
+        case 44:
+            //outci
+            print(memory[line + 1])
+            currentLine += 1
+            return false
         case 45:
             //outcr
             print(unicodeValueToCharacter(registers[memory[line + 1]]), terminator: "") //prints it as a character, not a number
             currentLine += 1
             return false;
+        case 46:
+            //outcx
+            break
+        case 47:
+            //outcb
+            break
+        case 48:
+            //readi
+            break
         case 49:
             //printi
             print(String(registers[memory[line + 1]]), terminator: "")
             currentLine += 1
             return false;
+        case 50:
+            //readc
+            break
+        case 51:
+            //readln
+            break
+        case 52:
+            //brk
+            break
+        case 53:
+            //movrx
+            break
+        case 54:
+            //movxx
+            break
         case 55:
             // outs
             print(getStringFromLocation(memory[line + 1]), terminator: "")
             currentLine += 1
+            return false
+        case 56:
+            //nop
+            //literally does nothing :/
             return false
         case 57:
             //jmpne
@@ -110,7 +284,7 @@ class Executioner {
         }
         return false;
     }
-
+    
     //this executes whatever is currently in memory
     func execute() {
         //if a program doesn't even have a length and a pointer to begin, you got a problem

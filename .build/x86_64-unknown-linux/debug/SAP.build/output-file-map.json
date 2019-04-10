@@ -1,0 +1,17 @@
+{
+  "": {
+    "swift-dependencies": "/home/learnswift/COMP167/SAP/.build/x86_64-unknown-linux/debug/SAP.build/master.swiftdeps"
+  },
+  "/home/learnswift/COMP167/SAP/Executioner.swift": {
+    "dependencies": "/home/learnswift/COMP167/SAP/.build/x86_64-unknown-linux/debug/SAP.build/Executioner.d",
+    "object": "/home/learnswift/COMP167/SAP/.build/x86_64-unknown-linux/debug/SAP.build/Executioner.swift.o",
+    "swiftmodule": "/home/learnswift/COMP167/SAP/.build/x86_64-unknown-linux/debug/SAP.build/Executioner~partial.swiftmodule",
+    "swift-dependencies": "/home/learnswift/COMP167/SAP/.build/x86_64-unknown-linux/debug/SAP.build/Executioner.swiftdeps"
+  },
+  "/home/learnswift/COMP167/SAP/main.swift": {
+    "dependencies": "/home/learnswift/COMP167/SAP/.build/x86_64-unknown-linux/debug/SAP.build/main.d",
+    "object": "/home/learnswift/COMP167/SAP/.build/x86_64-unknown-linux/debug/SAP.build/main.swift.o",
+    "swiftmodule": "/home/learnswift/COMP167/SAP/.build/x86_64-unknown-linux/debug/SAP.build/main~partial.swiftmodule",
+    "swift-dependencies": "/home/learnswift/COMP167/SAP/.build/x86_64-unknown-linux/debug/SAP.build/main.swiftdeps"
+  }
+}

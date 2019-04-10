@@ -1,0 +1,43 @@
+client:
+  name: swift-build
+tools: {}
+targets:
+  "main": ["<SAP.module>","<SAP.exe>"]
+  "test": ["<SAP.module>","<SAP.exe>"]
+  "SAP.module": ["<SAP.module>"]
+  "SAP.exe": ["<SAP.exe>"]
+default: "main"
+commands: 
+  "<C.SAP.exe>":
+    tool: phony
+    inputs: ["/home/learnswift/COMP167/SAP/.build/x86_64-unknown-linux/debug/SAP"]
+    outputs: ["<SAP.exe>"]
+
+  "<C.SAP.module>":
+    tool: phony
+    inputs: ["/home/learnswift/COMP167/SAP/.build/x86_64-unknown-linux/debug/SAP.swiftmodule"]
+    outputs: ["<SAP.module>"]
+
+  "C.SAP.exe":
+    tool: shell
+    description: "Linking ./.build/x86_64-unknown-linux/debug/SAP"
+    inputs: ["/home/learnswift/COMP167/SAP/.build/x86_64-unknown-linux/debug/SAP.build/Executioner.swift.o","/home/learnswift/COMP167/SAP/.build/x86_64-unknown-linux/debug/SAP.build/main.swift.o"]
+    outputs: ["/home/learnswift/COMP167/SAP/.build/x86_64-unknown-linux/debug/SAP"]
+    args: ["/home/learnswift/Downloads/swift-4.0.2-RELEASE-ubuntu14.04/usr/bin/swiftc","-target","x86_64-unknown-linux","-sdk","/","-g","-L","/home/learnswift/COMP167/SAP/.build/x86_64-unknown-linux/debug","-o","/home/learnswift/COMP167/SAP/.build/x86_64-unknown-linux/debug/SAP","-module-name","SAP","-emit-executable","-Xlinker","-rpath=$ORIGIN","/home/learnswift/COMP167/SAP/.build/x86_64-unknown-linux/debug/SAP.build/Executioner.swift.o","/home/learnswift/COMP167/SAP/.build/x86_64-unknown-linux/debug/SAP.build/main.swift.o"]
+
+  "C.SAP.module":
+    tool: swift-compiler
+    executable: "/home/learnswift/Downloads/swift-4.0.2-RELEASE-ubuntu14.04/usr/bin/swiftc"
+    module-name: "SAP"
+    module-output-path: "/home/learnswift/COMP167/SAP/.build/x86_64-unknown-linux/debug/SAP.swiftmodule"
+    inputs: ["/home/learnswift/COMP167/SAP/Executioner.swift","/home/learnswift/COMP167/SAP/main.swift"]
+    outputs: ["/home/learnswift/COMP167/SAP/.build/x86_64-unknown-linux/debug/SAP.build/Executioner.swift.o","/home/learnswift/COMP167/SAP/.build/x86_64-unknown-linux/debug/SAP.build/main.swift.o","/home/learnswift/COMP167/SAP/.build/x86_64-unknown-linux/debug/SAP.swiftmodule"]
+    import-paths: ["/home/learnswift/COMP167/SAP/.build/x86_64-unknown-linux/debug"]
+    temps-path: "/home/learnswift/COMP167/SAP/.build/x86_64-unknown-linux/debug/SAP.build"
+    objects: ["/home/learnswift/COMP167/SAP/.build/x86_64-unknown-linux/debug/SAP.build/Executioner.swift.o","/home/learnswift/COMP167/SAP/.build/x86_64-unknown-linux/debug/SAP.build/main.swift.o"]
+    other-args: ["-swift-version","3","-target","x86_64-unknown-linux","-sdk","/","-Onone","-g","-enable-testing","-j8","-DSWIFT_PACKAGE","-module-cache-path","/home/learnswift/COMP167/SAP/.build/x86_64-unknown-linux/debug/ModuleCache"]
+    sources: ["/home/learnswift/COMP167/SAP/Executioner.swift","/home/learnswift/COMP167/SAP/main.swift"]
+    is-library: false
+    enable-whole-module-optimization: false
+    num-threads: "8"
+

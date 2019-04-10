@@ -62,6 +62,7 @@ func readFromFile(path: String?){
 }
 
 //TEST CODE:
-readFromFile(path: "/Users/andrewstadnicki/Desktop/Doubles.txt")
+readFromFile(path: "Doubles.txt")
 //Andrew's computer: /Users/andrewstadnicki/Desktop/Doubles.txt
 //Computer at school: /Users/STUDENT ID NUMBER HERE/Desktop/Doubles.txt
+//linux vm: Doubles.txt

@@ -59,7 +59,6 @@ class Executioner {
                 print("FATAL ERROR LOADING PROGRAM: Invalid instruction (\"\(program[i + 2])\")");
                 return;
             }
-            print(memory.count)
             memory[i] = stringToInstruction!;
         }
         print("Successfully loaded program")
@@ -70,7 +69,7 @@ class Executioner {
             return symbolsToStrings[pointer]!
         }
         var currentIndex = pointer + 1
-        let stopIndex = accessMemory(pointer) + pointer
+        let stopIndex = accessMemory(pointer) + pointer + 1
         //print("memory pointer \(memory[pointer + 2])")
         var string = ""
         while currentIndex != stopIndex {
@@ -123,7 +122,6 @@ class Executioner {
             return false;
         case 45:
             //outcr
-            print(memory[line + 1])
             print(unicodeValueToCharacter(registers[memory[line + 1]]), terminator: "") //prints it as a character, not a number
             currentLine += 1
             return false;
@@ -142,7 +140,10 @@ class Executioner {
             //if compare was not equal:
             if compare != 0 {
                 currentLine = memory[line + 1] - 1;
+                // print("currentLine - \(currentLine)")
+                return false;
             }
+            currentLine += 2;
             return false;
         default:
             print("[ERROR] Unknown instruction \"\(memory[line])\" at line \(line)")

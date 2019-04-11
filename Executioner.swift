@@ -1,6 +1,6 @@
 //this file stores the class that executes the code
 //no relation to capital punishment
-//crash conditions: out of memory, illegal instruction, (SOMETHING ELSE)
+//crash conditions: out of memory, illegal instruction, div by 0, illegal register, stack overflow
 class Executioner {
     //the registers
     var registers: [Int] = Array(repeating: 0, count: 10)
@@ -11,25 +11,57 @@ class Executioner {
     //having them be a member of the class is more accurate to real world (not necessarily in a good way)
     //memory holds program
     var memory: [Int] = []
-    
+    //1 = out of memory, 2 = div by 0, 3 = illegal register, 4 = stack overflow, 5 = stack empty
+    var errorMessages = ["ERROR: NO ERROR", "Illegal memory address", "Divide by 0", "Illegal register", "Stack overflow", "Stack empty"]
+    var error = 0;
+
     init() {
         for _ in 0..<20000 {
             memory.append(0)
         }
     }
-    
+
     //shortcut for accessing strings
     var symbolsToStrings: [Int : String] = [:]
-    
-    //a wrapper for memory[] that gives an error
+
+    //wrapper functions that return an appropriate error
     func accessMemory(_ index: Int)->Int {
-        if (index > 0 && index < memory.count) {
+        if (index >= 0 && index < memory.count) {
             return memory[index]
         }
-        print("[ERROR] memory address out of bounds (address: \(index), memory size: \(memory.count))");
+        error = 1;
         return 0; //TODO: make this crash
     }
-    
+    func writeMemory(_ index: Int, _ what: Int) {
+        if (index >= 0 && index < memory.count) {
+            memory[index] = what;
+        }
+        error = 1;
+        // print(index)
+        return; //TODO: make this crash
+    }
+    func divide(_ numerator: Int, _ denominator: Int)->Int {
+        if (denominator == 0) {
+            error = 2
+            return 0
+        }
+        return numerator / denominator
+    }
+    func accessRegister(_ register: Int)->Int {
+        if (register < 0 || register > 9) {
+            error = 3;
+            return 0;
+        }
+        return registers[register]
+    }
+    func writeRegister(_ register: Int, _ what: Int) {
+        if (register < 0 || register > 9) {
+            error = 3;
+            return;
+        }
+        registers[register] = what
+    }
+
     //this takes a [string] program, clears memory, and puts program into memory as [int]
     func loadProgram(_ program: [String]) {
         //if a program doesn't even have a length and a pointer to begin, you got a problem
@@ -63,7 +95,7 @@ class Executioner {
         }
         print("Successfully loaded program")
     }
-    
+
     func getStringFromLocation(_ pointer: Int) -> String {
         if symbolsToStrings[pointer] != nil {
             return symbolsToStrings[pointer]!
@@ -80,140 +112,153 @@ class Executioner {
         symbolsToStrings[pointer] = string
         return symbolsToStrings[pointer]!
     }
-    
+
     //this executes one specific line
     //returns true on halt, false otherwise
     func executeLine(_ line: Int)->Bool {
         // print("executing line \(line), which contains the instruction \(accessMemory(line))")
         //return false if halt
-        if (memory[line] == 0) {
+        if (accessMemory(line) == 0) {
             return true
         }
         //execute the line
         //note: memory[line + 1] = nextLine, memory[line + 2] = nextNextLine
         //I didn't make variables with those names so it doesn't cause crashes when
         //trying to access things outside memory if no arguments are needed for the instruction
-        switch memory[line] {
+        switch accessMemory(line) {
         case 1:
             //clrr
-            registers[memory[line + 1]] = 0
+            writeRegister(accessMemory(line + 1), 0)
             currentLine += 1
-            return false
+            break
         case 2:
             //clrx
+            writeRegister(accessRegister(accessMemory(line + 1)),0)
             break
         case 3:
             //clrm
+            writeMemory(accessMemory(line + 1), 0)
             break
         case 4:
             //clrb
+            //for i in initialPosition..<(initialPosition + count)
+            for i in accessMemory(line + 1)..<(accessMemory(line + 1) + accessMemory(line + 2)) {
+                writeMemory(i, 0)
+            }
             break
         case 5:
             //movir
-            registers[memory[line + 2]] = registers[memory[line + 1]]
+            // registers[memory[line + 2]] = registers[accessMemory(line + 1)]  //this seems wrong
+            writeRegister(accessMemory(line+2), accessMemory(line+1))
             currentLine += 2
-            return false
+            break
         case 6:
             //movrr
-            registers[memory[line + 2]] = registers[memory[line + 1]]
+            // registers[memory[line + 2]] = registers[accessMemory(line + 1)]
+            writeRegister(accessMemory(line+2), accessRegister(accessMemory(line+1)))
             currentLine += 2
-            return false
+            break
         case 7:
             //movrm
-            memory[memory[line + 2]] = registers[memory[line + 1]]
+            // memory[memory[line + 2]] = registers[accessMemory(line + 1)]
+            writeMemory(accessMemory(line+2), accessRegister(accessMemory(line+1)))
             currentLine += 2
-            return false
+            break
         case 8:
             //movmr
-            // print("registers[\(memory[line + 2])] = memory[\(memory[line + 1])]")
-            registers[memory[line + 2]] = memory[memory[line + 1]]
+            // print("registers[\(memory[line + 2])] = memory[\(accessMemory(line + 1))]")
+            // registers[memory[line + 2]] = memory[accessMemory(line + 1)]
+            writeRegister(accessMemory(line+2), accessMemory(accessMemory(line + 1)))
             currentLine += 2
-            return false;
+            break;
         case 9:
             //movxr
+            writeRegister(accessMemory(line+2), accessMemory(accessRegister(accessMemory(line + 1))))
+            currentLine += 2
             break
         case 10:
             //movar
+            writeRegister(accessMemory(line+2), accessMemory(line + 1))
             break
         case 11:
             //movb
             break
         case 12:
             //addir
-            registers[memory[line + 2]] += memory[line + 1]
+            registers[memory[line + 2]] += accessMemory(line + 1)
             currentLine += 2
-            return false;
+            break;
         case 13:
             //addrr
-            registers[memory[line + 2]] += registers[memory[line + 1]]
+            registers[memory[line + 2]] += registers[accessMemory(line + 1)]
             currentLine += 2
-            return false;
+            break;
         case 14:
             //addmr
-            registers[memory[line + 2]] += memory[memory[line + 1]]
+            registers[memory[line + 2]] += memory[accessMemory(line + 1)]
             currentLine += 2
-            return false
+            break
         case 15:
             //addxr
             break
         case 16:
             //subir
-            registers[memory[line + 2]] -= memory[line + 1]
+            registers[memory[line + 2]] -= accessMemory(line + 1)
             currentLine += 2
-            return false
+            break
         case 17:
             //subrr
-            registers[memory[line + 2]] -= registers[memory[line + 1]]
+            registers[memory[line + 2]] -= registers[accessMemory(line + 1)]
             currentLine += 2
-            return false
+            break
         case 18:
             //submr
-            registers[memory[line + 2]] -= memory[memory[line + 1]]
+            registers[memory[line + 2]] -= memory[accessMemory(line + 1)]
             currentLine += 2
-            return false
+            break
         case 19:
             //subxr
             break
         case 20:
             //mulir
-            registers[memory[line + 2]] *= memory[line + 1]
+            registers[memory[line + 2]] *= accessMemory(line + 1)
             currentLine += 2
-            return false
+            break
         case 21:
             //mulrr
-            registers[memory[line + 2]] *= registers[memory[line + 1]]
+            registers[memory[line + 2]] *= registers[accessMemory(line + 1)]
             currentLine += 2
-            return false
+            break
         case 22:
             //mulmr
-            registers[memory[line + 2]] *= memory[memory[line + 1]]
+            registers[memory[line + 2]] *= memory[accessMemory(line + 1)]
             currentLine += 2
-            return false
+            break
         case 23:
             //mulxr
             break
         case 24:
             //divir
-            registers[memory[line + 2]] /= memory[line + 1]
+            registers[memory[line + 2]] /= accessMemory(line + 1)
             currentLine += 2
-            return false
+            break
         case 25:
             //divrr
-            registers[memory[line + 2]] /= registers[memory[line + 1]]
+            registers[memory[line + 2]] /= registers[accessMemory(line + 1)]
             currentLine += 2
-            return false
+            break
         case 26:
             //divmr
-            registers[memory[line + 2]] /= memory[memory[line + 1]]
+            registers[memory[line + 2]] /= memory[accessMemory(line + 1)]
             currentLine += 2
-            return false
+            break
         case 27:
             //divxr
             break
         case 28:
             //jmp
-            currentLine = memory[line + 1] - 1
-            return false
+            currentLine = accessMemory(line + 1) - 1
+            break
         case 29:
             //sojz
             break
@@ -231,9 +276,9 @@ class Executioner {
             break
         case 34:
             //cmprr
-            compare = registers[memory[line + 1]] - registers[memory[line + 2]];
+            compare = registers[accessMemory(line + 1)] - registers[memory[line + 2]];
             currentLine += 2
-            return false
+            break
         case 35:
             //cmpmr
             break
@@ -263,14 +308,14 @@ class Executioner {
             break
         case 44:
             //outci
-            print(memory[line + 1])
+            print(accessMemory(line + 1))
             currentLine += 1
-            return false
+            break
         case 45:
             //outcr
-            print(unicodeValueToCharacter(registers[memory[line + 1]]), terminator: "") //prints it as a character, not a number
+            print(unicodeValueToCharacter(registers[accessMemory(line + 1)]), terminator: "") //prints it as a character, not a number
             currentLine += 1
-            return false;
+            break;
         case 46:
             //outcx
             break
@@ -282,9 +327,9 @@ class Executioner {
             break
         case 49:
             //printi
-            print(String(registers[memory[line + 1]]), terminator: "")
+            print(String(registers[accessMemory(line + 1)]), terminator: "")
             currentLine += 1
-            return false;
+            break;
         case 50:
             //readc
             break
@@ -302,30 +347,35 @@ class Executioner {
             break
         case 55:
             // outs
-            print(getStringFromLocation(memory[line + 1]), terminator: "")
+            print(getStringFromLocation(accessMemory(line + 1)), terminator: "")
             currentLine += 1
-            return false
+            break
         case 56:
             //nop
             //literally does nothing :/
-            return false
+            break
         case 57:
             //jmpne
             //if compare was not equal:
             if compare != 0 {
-                currentLine = memory[line + 1] - 1;
+                currentLine = accessMemory(line + 1) - 1;
                 // print("currentLine - \(currentLine)")
-                return false;
+                break;
             }
             currentLine += 2;
-            return false;
+            break;
         default:
-            print("[ERROR] Unknown instruction \"\(memory[line])\" at line \(line)")
+            print("ERROR Unknown instruction \"\(memory[line])\" at line \(line)")
             return true
+        }
+        if (error != 0) {
+            print("ERROR #\(error) \(errorMessages[error]) at line \(line)");
+            error = 0;
+            return true;
         }
         return false;
     }
-    
+
     //this executes whatever is currently in memory
     func execute() {
         while true {

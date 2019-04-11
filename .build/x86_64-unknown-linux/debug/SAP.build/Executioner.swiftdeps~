@@ -8,13 +8,18 @@ provides-member:
 depends-top-level:
 - !private "!="
 - !private "&&"
+- !private "*="
 - !private "+"
 - !private "+="
 - !private "-"
+- !private "-="
 - !private "..<"
+- !private "/"
+- !private "/="
 - !private "<"
 - !private "=="
 - !private ">"
+- !private ">="
 - "Array"
 - "AssignmentPrecedence"
 - "Bool"
@@ -24,10 +29,11 @@ depends-top-level:
 - "Int"
 - "IntegerLiteralType"
 - "String"
-- !private "StringLiteralType"
+- "StringLiteralType"
 - !private "UnicodeScalarType"
 - !private "print"
 - !private "unicodeValueToCharacter"
+- !private "||"
 - !private "~="
 depends-member:
 - !private ["Sa", "append"]
@@ -45,13 +51,13 @@ depends-member:
 - !private ["s10CollectionP", "count"]
 - ["s10CollectionP", "init"]
 - !private ["s10CollectionP", "subscript"]
-- !private ["s10ComparableP", "init"]
+- ["s10ComparableP", "init"]
 - !private ["s28CustomDebugStringConvertibleP", "append"]
 - !private ["s28CustomDebugStringConvertibleP", "count"]
 - ["s28CustomDebugStringConvertibleP", "init"]
 - !private ["s28CustomDebugStringConvertibleP", "subscript"]
 - !private ["s29CustomPlaygroundQuickLookableP", "_getBuiltinLogicValue"]
-- !private ["s29CustomPlaygroundQuickLookableP", "init"]
+- ["s29CustomPlaygroundQuickLookableP", "init"]
 - !private ["s17CustomReflectableP", "_getBuiltinLogicValue"]
 - !private ["s17CustomReflectableP", "append"]
 - !private ["s17CustomReflectableP", "count"]
@@ -74,15 +80,19 @@ depends-member:
 - ["s9EncodableP", "init"]
 - !private ["s9EncodableP", "subscript"]
 - !private ["s9EquatableP", "_getBuiltinLogicValue"]
-- !private ["s9EquatableP", "init"]
+- ["s9EquatableP", "init"]
 - ["3SAP11ExecutionerC", "Array"]
 - ["3SAP11ExecutionerC", "Bool"]
 - ["3SAP11ExecutionerC", "Int"]
 - ["3SAP11ExecutionerC", "String"]
 - ["3SAP11ExecutionerC", "accessMemory"]
+- ["3SAP11ExecutionerC", "accessRegister"]
 - ["3SAP11ExecutionerC", "compare"]
 - ["3SAP11ExecutionerC", "currentLine"]
 - ["3SAP11ExecutionerC", "deinit"]
+- ["3SAP11ExecutionerC", "divide"]
+- ["3SAP11ExecutionerC", "error"]
+- ["3SAP11ExecutionerC", "errorMessages"]
 - ["3SAP11ExecutionerC", "execute"]
 - ["3SAP11ExecutionerC", "executeLine"]
 - ["3SAP11ExecutionerC", "getStringFromLocation"]
@@ -93,23 +103,25 @@ depends-member:
 - ["3SAP11ExecutionerC", "registers"]
 - ["3SAP11ExecutionerC", "symbolsToStrings"]
 - !private ["3SAP11ExecutionerC", "unicodeValueToCharacter"]
+- ["3SAP11ExecutionerC", "writeMemory"]
+- ["3SAP11ExecutionerC", "writeRegister"]
 - !private ["s25ExpressibleByArrayLiteralP", "append"]
 - !private ["s25ExpressibleByArrayLiteralP", "count"]
 - ["s25ExpressibleByArrayLiteralP", "init"]
 - !private ["s25ExpressibleByArrayLiteralP", "subscript"]
 - !private ["s27ExpressibleByBooleanLiteralP", "_getBuiltinLogicValue"]
 - !private ["s30ExpressibleByDictionaryLiteralP", "subscript"]
-- !private ["s43ExpressibleByExtendedGraphemeClusterLiteralP", "init"]
+- ["s43ExpressibleByExtendedGraphemeClusterLiteralP", "init"]
 - !private ["s27ExpressibleByIntegerLiteralP", "init"]
-- !private ["s26ExpressibleByStringLiteralP", "init"]
-- !private ["s33ExpressibleByUnicodeScalarLiteralP", "init"]
+- ["s26ExpressibleByStringLiteralP", "init"]
+- ["s33ExpressibleByUnicodeScalarLiteralP", "init"]
 - !private ["s17FixedWidthIntegerP", "init"]
 - !private ["s8HashableP", "_getBuiltinLogicValue"]
-- !private ["s8HashableP", "init"]
+- ["s8HashableP", "init"]
 - !private ["Si", "init"]
 - !private ["s25LosslessStringConvertibleP", "_getBuiltinLogicValue"]
-- !private ["s25LosslessStringConvertibleP", "init"]
-- !private ["s10MirrorPathP", "init"]
+- ["s25LosslessStringConvertibleP", "init"]
+- ["s10MirrorPathP", "init"]
 - !private ["s17MutableCollectionP", "append"]
 - !private ["s17MutableCollectionP", "count"]
 - ["s17MutableCollectionP", "init"]
@@ -130,10 +142,10 @@ depends-member:
 - !private ["s13SignedIntegerP", "init"]
 - !private ["s13SignedNumericP", "init"]
 - !private ["s10StrideableP", "init"]
-- !private ["SS", "init"]
-- !private ["s14StringProtocolP", "init"]
-- !private ["s16TextOutputStreamP", "init"]
-- !private ["s20TextOutputStreamableP", "init"]
+- ["SS", "init"]
+- ["s14StringProtocolP", "init"]
+- ["s16TextOutputStreamP", "init"]
+- ["s20TextOutputStreamableP", "init"]
 - !private ["s14_ArrayProtocolP", "append"]
 - !private ["s14_ArrayProtocolP", "count"]
 - ["s14_ArrayProtocolP", "init"]
@@ -153,12 +165,12 @@ depends-member:
 - ["s24_DestructorSafeContainerP", "init"]
 - !private ["s24_DestructorSafeContainerP", "subscript"]
 - !private ["s35_ExpressibleByBuiltinBooleanLiteralP", "_getBuiltinLogicValue"]
-- !private ["s51_ExpressibleByBuiltinExtendedGraphemeClusterLiteralP", "init"]
+- ["s51_ExpressibleByBuiltinExtendedGraphemeClusterLiteralP", "init"]
 - !private ["s35_ExpressibleByBuiltinIntegerLiteralP", "init"]
-- !private ["s34_ExpressibleByBuiltinStringLiteralP", "init"]
-- !private ["s39_ExpressibleByBuiltinUTF16StringLiteralP", "init"]
-- !private ["s41_ExpressibleByBuiltinUnicodeScalarLiteralP", "init"]
-- !private ["s33_ExpressibleByStringInterpolationP", "init"]
+- ["s34_ExpressibleByBuiltinStringLiteralP", "init"]
+- ["s39_ExpressibleByBuiltinUTF16StringLiteralP", "init"]
+- ["s41_ExpressibleByBuiltinUnicodeScalarLiteralP", "init"]
+- ["s33_ExpressibleByStringInterpolationP", "init"]
 - !private ["s10_IndexableP", "append"]
 - !private ["s10_IndexableP", "count"]
 - ["s10_IndexableP", "init"]
@@ -194,7 +206,7 @@ depends-member:
 - ["s26_RangeReplaceableIndexableP", "init"]
 - !private ["s26_RangeReplaceableIndexableP", "subscript"]
 - !private ["s11_StrideableP", "init"]
-- !private ["s16_SwiftStringViewP", "init"]
+- ["s16_SwiftStringViewP", "init"]
 depends-nominal:
 - "Sa"
 - "s23BidirectionalCollectionP"
@@ -202,28 +214,28 @@ depends-nominal:
 - !private "Sb"
 - !private "s7CVarArgP"
 - "s10CollectionP"
-- !private "s10ComparableP"
+- "s10ComparableP"
 - "s28CustomDebugStringConvertibleP"
-- !private "s29CustomPlaygroundQuickLookableP"
+- "s29CustomPlaygroundQuickLookableP"
 - "s17CustomReflectableP"
 - "s23CustomStringConvertibleP"
 - "s9DecodableP"
 - !private "s10DictionaryV"
 - "s9EncodableP"
-- !private "s9EquatableP"
+- "s9EquatableP"
 - "3SAP11ExecutionerC"
 - "s25ExpressibleByArrayLiteralP"
 - !private "s27ExpressibleByBooleanLiteralP"
 - !private "s30ExpressibleByDictionaryLiteralP"
-- !private "s43ExpressibleByExtendedGraphemeClusterLiteralP"
+- "s43ExpressibleByExtendedGraphemeClusterLiteralP"
 - !private "s27ExpressibleByIntegerLiteralP"
-- !private "s26ExpressibleByStringLiteralP"
-- !private "s33ExpressibleByUnicodeScalarLiteralP"
+- "s26ExpressibleByStringLiteralP"
+- "s33ExpressibleByUnicodeScalarLiteralP"
 - !private "s17FixedWidthIntegerP"
-- !private "s8HashableP"
+- "s8HashableP"
 - !private "Si"
-- !private "s25LosslessStringConvertibleP"
-- !private "s10MirrorPathP"
+- "s25LosslessStringConvertibleP"
+- "s10MirrorPathP"
 - "s17MutableCollectionP"
 - !private "s7NumericP"
 - "s22RandomAccessCollectionP"
@@ -232,22 +244,22 @@ depends-nominal:
 - !private "s13SignedIntegerP"
 - !private "s13SignedNumericP"
 - !private "s10StrideableP"
-- !private "SS"
-- !private "s14StringProtocolP"
-- !private "s16TextOutputStreamP"
-- !private "s20TextOutputStreamableP"
+- "SS"
+- "s14StringProtocolP"
+- "s16TextOutputStreamP"
+- "s20TextOutputStreamableP"
 - "s14_ArrayProtocolP"
 - "s23_BidirectionalIndexableP"
 - !private "s18_BitwiseOperationsP"
 - "10Foundation13_CFBridgeableP"
 - "s24_DestructorSafeContainerP"
 - !private "s35_ExpressibleByBuiltinBooleanLiteralP"
-- !private "s51_ExpressibleByBuiltinExtendedGraphemeClusterLiteralP"
+- "s51_ExpressibleByBuiltinExtendedGraphemeClusterLiteralP"
 - !private "s35_ExpressibleByBuiltinIntegerLiteralP"
-- !private "s34_ExpressibleByBuiltinStringLiteralP"
-- !private "s39_ExpressibleByBuiltinUTF16StringLiteralP"
-- !private "s41_ExpressibleByBuiltinUnicodeScalarLiteralP"
-- !private "s33_ExpressibleByStringInterpolationP"
+- "s34_ExpressibleByBuiltinStringLiteralP"
+- "s39_ExpressibleByBuiltinUTF16StringLiteralP"
+- "s41_ExpressibleByBuiltinUnicodeScalarLiteralP"
+- "s33_ExpressibleByStringInterpolationP"
 - "s10_IndexableP"
 - "s14_IndexableBaseP"
 - "s17_MutableIndexableP"
@@ -257,7 +269,7 @@ depends-nominal:
 - "s22_RandomAccessIndexableP"
 - "s26_RangeReplaceableIndexableP"
 - !private "s11_StrideableP"
-- !private "s16_SwiftStringViewP"
+- "s16_SwiftStringViewP"
 depends-dynamic-lookup:
 depends-external:
 - "/home/learnswift/Downloads/swift-4.0.2-RELEASE-ubuntu14.04/usr/lib/swift/linux/x86_64/Glibc.swiftmodule"
@@ -266,4 +278,4 @@ depends-external:
 - "/home/learnswift/Downloads/swift-4.0.2-RELEASE-ubuntu14.04/usr/lib/swift/linux/x86_64/Swift.swiftmodule"
 - "/home/learnswift/Downloads/swift-4.0.2-RELEASE-ubuntu14.04/usr/lib/swift/linux/x86_64/SwiftOnoneSupport.swiftmodule"
 - "/home/learnswift/Downloads/swift-4.0.2-RELEASE-ubuntu14.04/usr/lib/swift/linux/x86_64/glibc.modulemap"
-interface-hash: "ee742097d5305117b1a3f4be1a6ffa79"
+interface-hash: "2e3f3f7dd2b527ec72d5e25ccf379129"

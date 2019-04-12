@@ -61,6 +61,18 @@ class Executioner {
         }
         registers[register] = what
     }
+    func moveBlock(_ source: Int, _ destination: Int, _ length: Int) {
+        //store the contents fo the block
+        var block: [Int] = [];
+        //move from memory to temporary storage
+        for i in 0..<length {
+            block.append(accessMemory(source + i));
+        }
+        //move to new location
+        for i in 0..<length {
+            writeMemory(destination + i, block[i])
+        }
+    }
 
     //this takes a [string] program, clears memory, and puts program into memory as [int]
     func loadProgram(_ program: [String]) {
@@ -179,27 +191,32 @@ class Executioner {
         case 10:
             //movar
             writeRegister(accessMemory(line+2), accessMemory(line + 1))
+            currentLine += 2
             break
         case 11:
             //movb
+            moveBlock(accessRegister(accessMemory(line + 1)), accessRegister(accessMemory(line + 2)), accessRegister(accessMemory(line + 2)))
+            currentLine += 3
             break
         case 12:
             //addir
-            registers[memory[line + 2]] += accessMemory(line + 1)
+            writeRegister(accessMemory(line + 2), accessRegister(accessMemory(line + 2)) + accessMemory(line + 1))
             currentLine += 2
             break;
         case 13:
             //addrr
-            registers[memory[line + 2]] += registers[accessMemory(line + 1)]
+            writeRegister(accessMemory(line + 2), accessRegister(accessMemory(line + 2)) + accessRegister(accessMemory(line + 1)))
             currentLine += 2
             break;
         case 14:
             //addmr
-            registers[memory[line + 2]] += memory[accessMemory(line + 1)]
+            // registers[memory[line + 2]] += memory[accessMemory(line + 1)]
+            writeRegister(accessMemory(line + 2), accessMemory(accessMemory(line + 1)))
             currentLine += 2
             break
         case 15:
             //addxr
+            
             break
         case 16:
             //subir
@@ -369,7 +386,7 @@ class Executioner {
             return true
         }
         if (error != 0) {
-            print("ERROR #\(error) \(errorMessages[error]) at line \(line)");
+            print("ERROR #\(error) \(errorMessages[error]) at line \(line) (instruction \(accessMemory(line)))");
             error = 0;
             return true;
         }

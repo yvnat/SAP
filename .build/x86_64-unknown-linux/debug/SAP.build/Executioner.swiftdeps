@@ -99,6 +99,7 @@ depends-member:
 - ["3SAP11ExecutionerC", "init"]
 - ["3SAP11ExecutionerC", "loadProgram"]
 - ["3SAP11ExecutionerC", "memory"]
+- ["3SAP11ExecutionerC", "moveBlock"]
 - !private ["3SAP11ExecutionerC", "print"]
 - ["3SAP11ExecutionerC", "registers"]
 - ["3SAP11ExecutionerC", "symbolsToStrings"]
@@ -278,4 +279,4 @@ depends-external:
 - "/home/learnswift/Downloads/swift-4.0.2-RELEASE-ubuntu14.04/usr/lib/swift/linux/x86_64/Swift.swiftmodule"
 - "/home/learnswift/Downloads/swift-4.0.2-RELEASE-ubuntu14.04/usr/lib/swift/linux/x86_64/SwiftOnoneSupport.swiftmodule"
 - "/home/learnswift/Downloads/swift-4.0.2-RELEASE-ubuntu14.04/usr/lib/swift/linux/x86_64/glibc.modulemap"
-interface-hash: "2e3f3f7dd2b527ec72d5e25ccf379129"
+interface-hash: "2d74bd0c4d1f3958d0a052c2ab8643cb"

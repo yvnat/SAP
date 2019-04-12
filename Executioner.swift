@@ -211,48 +211,59 @@ class Executioner {
         case 14:
             //addmr
             // registers[memory[line + 2]] += memory[accessMemory(line + 1)]
-            writeRegister(accessMemory(line + 2), accessMemory(accessMemory(line + 1)))
+            writeRegister(accessMemory(line + 2), accessMemory(line + 2) + accessMemory(accessMemory(line + 1)))
             currentLine += 2
             break
         case 15:
             //addxr
-            
+            writeRegister(accessMemory(line+2), accessRegister(accessMemory(line+2)) - accessMemory(accessRegister(accessMemory(line+1))))
+            currentLine += 2;
             break
         case 16:
             //subir
-            registers[memory[line + 2]] -= accessMemory(line + 1)
+            // registers[memory[line + 2]] -= accessMemory(line + 1)
+            writeRegister(accessMemory(line + 2), accessRegister(accessMemory(line + 2)) - accessMemory(line + 1))
             currentLine += 2
             break
         case 17:
             //subrr
-            registers[memory[line + 2]] -= registers[accessMemory(line + 1)]
+            // registers[memory[line + 2]] -= registers[accessMemory(line + 1)]
+            writeRegister(accessMemory(line + 2), accessRegister(accessMemory(line + 2)) - accessRegister(accessMemory(line + 1)))
             currentLine += 2
             break
         case 18:
             //submr
-            registers[memory[line + 2]] -= memory[accessMemory(line + 1)]
+            // registers[memory[line + 2]] -= memory[accessMemory(line + 1)]
+            writeRegister(accessMemory(line + 2), accessMemory(line + 2) - accessMemory(accessMemory(line + 1)))
             currentLine += 2
             break
         case 19:
             //subxr
+            writeRegister(accessMemory(line+2), accessRegister(accessMemory(line+2)) - accessMemory(accessRegister(accessMemory(line+1))))
+            currentLine += 2
             break
         case 20:
             //mulir
-            registers[memory[line + 2]] *= accessMemory(line + 1)
+            // registers[memory[line + 2]] *= accessMemory(line + 1)
+            writeRegister(accessMemory(line+2), accessRegister(accessMemory(line + 2)) * accessMemory(line + 1))
             currentLine += 2
             break
         case 21:
             //mulrr
-            registers[memory[line + 2]] *= registers[accessMemory(line + 1)]
+            // registers[memory[line + 2]] *= registers[accessMemory(line + 1)]
+            writeRegister(accessMemory(line + 2), accessRegister(accessMemory(line + 2)) * accessRegister(accessMemory(line + 1)))
             currentLine += 2
             break
         case 22:
             //mulmr
-            registers[memory[line + 2]] *= memory[accessMemory(line + 1)]
+            // registers[memory[line + 2]] *= memory[accessMemory(line + 1)]
+            writeRegister(accessMemory(line + 2), accessMemory(line + 2) * accessMemory(accessMemory(line + 1)))
             currentLine += 2
             break
         case 23:
             //mulxr
+            writeRegister(accessMemory(line+2), accessRegister(accessMemory(line+2)) * accessMemory(accessRegister(accessMemory(line+1))))
+            currentLine += 2
             break
         case 24:
             //divir

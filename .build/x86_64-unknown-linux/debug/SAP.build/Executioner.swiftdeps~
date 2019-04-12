@@ -8,11 +8,11 @@ provides-member:
 depends-top-level:
 - !private "!="
 - !private "&&"
+- !private "*"
 - !private "*="
 - !private "+"
 - !private "+="
 - !private "-"
-- !private "-="
 - !private "..<"
 - !private "/"
 - !private "/="

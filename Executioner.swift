@@ -78,6 +78,15 @@ class Executioner {
             print(unicodeValueToCharacter(accessMemory(source + i)), terminator: "")
         }
     }
+    func readString(_ memoryLocation: Int, _ register: Int) {
+        let input = readLine();
+        writeRegister(register, input.count)
+        int i = 0;
+        for char in input {
+            writeMemory(memoryLocation + i, characterToUnicodeValue(char))
+            i += 1;
+        }
+    }
 
     //this takes a [string] program, clears memory, and puts program into memory as [int]
     func loadProgram(_ program: [String]) {
@@ -421,6 +430,7 @@ class Executioner {
             break
         case 51:
             //readln
+            readString(accessMemory(line + 1), accessMemory(line + 2))
             break
         case 52:
             //brk

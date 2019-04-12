@@ -267,21 +267,26 @@ class Executioner {
             break
         case 24:
             //divir
-            registers[memory[line + 2]] /= accessMemory(line + 1)
+            // registers[memory[line + 2]] /= accessMemory(line + 1)
+            writeRegister(accessMemory(line+2), divide(accessRegister(accessMemory(line + 2)), accessMemory(line + 1)));
             currentLine += 2
             break
         case 25:
             //divrr
-            registers[memory[line + 2]] /= registers[accessMemory(line + 1)]
+            // registers[memory[line + 2]] /= registers[accessMemory(line + 1)]
+            writeRegister(accessMemory(line+2), divide(accessRegister(accessMemory(line + 2)), accessRegister(accessMemory(line + 1))))
             currentLine += 2
             break
         case 26:
             //divmr
-            registers[memory[line + 2]] /= memory[accessMemory(line + 1)]
+            // registers[memory[line + 2]] /= memory[accessMemory(line + 1)]
+            writeRegister(accessMemory(line+2), divide(accessMemory(line + 2), accessMemory(accessMemory(line + 1))))
             currentLine += 2
             break
         case 27:
             //divxr
+            writeRegister(accessMemory(line+2), divide(accessRegister(accessMemory(line+2)), accessMemory(accessRegister(accessMemory(line+1)))))
+            currentLine += 2
             break
         case 28:
             //jmp
@@ -289,36 +294,80 @@ class Executioner {
             break
         case 29:
             //sojz
+            writeRegister(accessMemory(line + 1), accessRegister(accessMemory(line + 1)) - 1);
+            if (accessRegister(accessMemory(line + 1)) == 0) {
+                currentLine = accessMemory(line + 2) - 1;
+                break;
+            }
+            currentLine += 2;
             break
         case 30:
             //sojnz
+            writeRegister(accessMemory(line + 1), accessRegister(accessMemory(line + 1)) - 1);
+            if (accessRegister(accessMemory(line + 1)) != 0) {
+                currentLine = accessMemory(line + 2) - 1;
+                break;
+            }
+            currentLine += 2;
             break
         case 31:
             //aojz
+            writeRegister(accessMemory(line + 1), accessRegister(accessMemory(line + 1)) + 1);
+            if (accessRegister(accessMemory(line + 1)) == 0) {
+                currentLine = accessMemory(line + 2) - 1;
+                break;
+            }
+            currentLine += 2;
             break
         case 32:
             //aojnz
+            writeRegister(accessMemory(line + 1), accessRegister(accessMemory(line + 1)) + 1);
+            if (accessRegister(accessMemory(line + 1)) != 0) {
+                currentLine = accessMemory(line + 2) - 1;
+                break;
+            }
+            currentLine += 2;
             break
         case 33:
             //cmpir
+            compare = accessMemory(line + 1) - accessRegister(accessMemory(line + 2));
             break
         case 34:
             //cmprr
-            compare = registers[accessMemory(line + 1)] - registers[memory[line + 2]];
+            compare = accessRegister(accessMemory(line + 1)) - accessRegister(accessMemory(line + 2));
             currentLine += 2
             break
         case 35:
             //cmpmr
+            compare = accessMemory(accessMemory(line + 1)) - accessRegister(accessMemory(line + 2));
             break
         case 36:
             //jmpn
-            break
+            if compare < 0 {
+                currentLine = accessMemory(line + 1) - 1;
+                // print("currentLine - \(currentLine)")
+                break;
+            }
+            currentLine += 2;
+            break;
         case 37:
             //jmpz
-            break
+            if compare == 0 {
+                currentLine = accessMemory(line + 1) - 1;
+                // print("currentLine - \(currentLine)")
+                break;
+            }
+            currentLine += 2;
+            break;
         case 38:
             //jmpp
-            break
+            if compare > 0 {
+                currentLine = accessMemory(line + 1) - 1;
+                // print("currentLine - \(currentLine)")
+                break;
+            }
+            currentLine += 2;
+            break;
         case 39:
             //jsr
             break

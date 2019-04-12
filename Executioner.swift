@@ -73,6 +73,11 @@ class Executioner {
             writeMemory(destination + i, block[i])
         }
     }
+    func printBlock(_ source: Int, _ count: Int) {
+        for i in 0..<count {
+            print(unicodeValueToCharacter(accessMemory(source + i)), terminator: "")
+        }
+    }
 
     //this takes a [string] program, clears memory, and puts program into memory as [int]
     func loadProgram(_ program: [String]) {
@@ -390,21 +395,25 @@ class Executioner {
             break
         case 45:
             //outcr
-            print(unicodeValueToCharacter(registers[accessMemory(line + 1)]), terminator: "") //prints it as a character, not a number
+            print(unicodeValueToCharacter(accessRegister(accessMemory(line + 1))), terminator: "") //prints it as a character, not a number
             currentLine += 1
             break;
         case 46:
             //outcx
+            print(unicodeValueToCharacter(accessMemory(accessRegister(accessMemory(line + 1)))), terminator: "")
+            currentLine += 1
             break
         case 47:
             //outcb
+            printBlock(accessRegister(accessMemory(line + 1)), accessRegister(accessMemory(line + 2)))
+            currentLine += 2
             break
         case 48:
             //readi
             break
         case 49:
             //printi
-            print(String(registers[accessMemory(line + 1)]), terminator: "")
+            print(String(accessRegister(accessMemory(line + 1))), terminator: "")
             currentLine += 1
             break;
         case 50:
@@ -418,9 +427,13 @@ class Executioner {
             break
         case 53:
             //movrx
+            writeMemory(accessRegister(accessMemory(line + 2)), accessRegister(accessMemory(line + 1)))
+            currentLine += 2
             break
         case 54:
             //movxx
+            writeMemory(accessRegister(accessMemory(line + 2)), accessMemory(accessRegister(accessMemory(line + 1))))
+            currentLine += 2;
             break
         case 55:
             // outs

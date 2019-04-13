@@ -14,16 +14,19 @@ class Executioner {
     //1 = out of memory, 2 = div by 0, 3 = illegal register, 4 = stack overflow, 5 = stack empty
     var errorMessages = ["ERROR: NO ERROR", "Illegal memory address", "Divide by 0", "Illegal register", "Stack overflow", "Stack empty"]
     var error = 0;
-
+    
     init() {
         for _ in 0..<20000 {
             memory.append(0)
         }
     }
-
+    
+    //stack
+    var stack = IntStack(size: 10)
+    
     //shortcut for accessing strings
     var symbolsToStrings: [Int : String] = [:]
-
+    
     //wrapper functions that return an appropriate error
     func accessMemory(_ index: Int)->Int {
         if (index >= 0 && index < memory.count) {
@@ -79,15 +82,15 @@ class Executioner {
         }
     }
     func readString(_ memoryLocation: Int, _ register: Int) {
-        let input = readLine();
-        writeRegister(register, input.count)
-        int i = 0;
+        let input = readLine()
+        writeRegister(register, (input?.count)!)
+        var i = 0
         for char in input {
             writeMemory(memoryLocation + i, characterToUnicodeValue(char))
             i += 1;
         }
     }
-
+    
     //this takes a [string] program, clears memory, and puts program into memory as [int]
     func loadProgram(_ program: [String]) {
         //if a program doesn't even have a length and a pointer to begin, you got a problem
@@ -121,7 +124,7 @@ class Executioner {
         }
         print("Successfully loaded program")
     }
-
+    
     func getStringFromLocation(_ pointer: Int) -> String {
         if symbolsToStrings[pointer] != nil {
             return symbolsToStrings[pointer]!
@@ -138,7 +141,7 @@ class Executioner {
         symbolsToStrings[pointer] = string
         return symbolsToStrings[pointer]!
     }
-
+    var lastCurrentLine = 0
     //this executes one specific line
     //returns true on halt, false otherwise
     func executeLine(_ line: Int)->Bool {
@@ -308,27 +311,27 @@ class Executioner {
             break
         case 29:
             //sojz
-            writeRegister(accessMemory(line + 1), accessRegister(accessMemory(line + 1)) - 1);
+            writeRegister(accessMemory(line + 1), accessRegister(accessMemory(line + 1)) - 1)
             if (accessRegister(accessMemory(line + 1)) == 0) {
                 currentLine = accessMemory(line + 2) - 1;
-                break;
+                break
             }
             currentLine += 2;
             break
         case 30:
             //sojnz
-            writeRegister(accessMemory(line + 1), accessRegister(accessMemory(line + 1)) - 1);
+            writeRegister(accessMemory(line + 1), accessRegister(accessMemory(line + 1)) - 1)
             if (accessRegister(accessMemory(line + 1)) != 0) {
-                currentLine = accessMemory(line + 2) - 1;
+                currentLine = accessMemory(line + 2) - 1
                 break;
             }
             currentLine += 2;
             break
         case 31:
             //aojz
-            writeRegister(accessMemory(line + 1), accessRegister(accessMemory(line + 1)) + 1);
+            writeRegister(accessMemory(line + 1), accessRegister(accessMemory(line + 1)) + 1)
             if (accessRegister(accessMemory(line + 1)) == 0) {
-                currentLine = accessMemory(line + 2) - 1;
+                currentLine = accessMemory(line + 2) - 1
                 break;
             }
             currentLine += 2;
@@ -353,49 +356,64 @@ class Executioner {
             break
         case 35:
             //cmpmr
-            compare = accessMemory(accessMemory(line + 1)) - accessRegister(accessMemory(line + 2));
+            compare = accessMemory(accessMemory(line + 1)) - accessRegister(accessMemory(line + 2))
+            currentLine += 2
             break
         case 36:
             //jmpn
             if compare < 0 {
                 currentLine = accessMemory(line + 1) - 1;
                 // print("currentLine - \(currentLine)")
-                break;
+                break
             }
-            currentLine += 2;
-            break;
+            break
         case 37:
             //jmpz
             if compare == 0 {
                 currentLine = accessMemory(line + 1) - 1;
                 // print("currentLine - \(currentLine)")
-                break;
+                break
             }
-            currentLine += 2;
-            break;
+            break
         case 38:
             //jmpp
             if compare > 0 {
                 currentLine = accessMemory(line + 1) - 1;
                 // print("currentLine - \(currentLine)")
-                break;
+                break
             }
             currentLine += 2;
-            break;
+            break
         case 39:
             //jsr
+            currentLine = accessMemory(line + 1) - 1
+            for index in 5...9 {
+                stack.push(registers[index])
+            }
             break
         case 40:
             //ret
+            var index = 5
+            while index != 10 {
+                stack.pop()
+                index += 1
+            }
             break
         case 41:
             //push
+            stack.push(1)
             break
         case 42:
             //pop
+            stack.pop()
             break
         case 43:
             //stackc
+            let count = stack.array.count
+            if count == 0 {writeMemory(line + 1, 2)}
+            if count != 0 && count < stack.size {writeMemory(line + 1, 0)}
+            if count >= stack.size {writeMemory(line + 1, 1)}
+            currentLine += 1
             break
         case 44:
             //outci
@@ -406,7 +424,7 @@ class Executioner {
             //outcr
             print(unicodeValueToCharacter(accessRegister(accessMemory(line + 1))), terminator: "") //prints it as a character, not a number
             currentLine += 1
-            break;
+            break
         case 46:
             //outcx
             print(unicodeValueToCharacter(accessMemory(accessRegister(accessMemory(line + 1)))), terminator: "")
@@ -419,6 +437,9 @@ class Executioner {
             break
         case 48:
             //readi
+            writeMemory(accessMemory(line + 1), Int(readLine()!)!)
+            writeMemory(accessMemory(line + 2), ERROR CODE HERE)
+            currentLine += 2
             break
         case 49:
             //printi
@@ -427,10 +448,13 @@ class Executioner {
             break;
         case 50:
             //readc
+            writeMemory(1, accessMemory(line + 1))
+            currentLine += 1
             break
         case 51:
             //readln
             readString(accessMemory(line + 1), accessMemory(line + 2))
+            currentLine += 2
             break
         case 52:
             //brk
@@ -475,7 +499,7 @@ class Executioner {
         }
         return false;
     }
-
+    
     //this executes whatever is currently in memory
     func execute() {
         while true {
@@ -483,7 +507,7 @@ class Executioner {
             let halt = executeLine(currentLine);
             //halt if the current instruction is halt
             if (halt) {
-                break;
+                break
             }
             //and of course increment the current line
             currentLine += 1;

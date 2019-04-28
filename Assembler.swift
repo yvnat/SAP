@@ -42,4 +42,76 @@ func splitStringIntoLines(expression: String)->[String]{
 }
 
 class Assembler {
+    var arrayOfLines: [String] = []
+    var currentLine = 0
+    var errorMessages = ["ERROR: NO ERROR", "Illegal memory address"]
+    var error = 1
+    //WE NEED ERROR CHECKING
+    //HINT FROM MR.STULIN:
+    var instructionParameters: [String:String] = [:]
+    func loadProgram(_ program: [String]) {
+        for i in 0..<program.count{
+            arrayOfLines[i] = program[i]
+        }
+    }
+    func accessArray(_ index: Int)->String {
+        if (index >= 0 && index < arrayOfLines.count) {
+            return arrayOfLines[index]
+        }
+        error = 1
+        return "" //TODO: make this crash
+    }
+    var characters: [Character] = []
+    var chunks: [Character] = []
+    //CONTINUE
+    func TranslateLineToCharacters(_ line: Int) {
+        
+    }
+    func TranslateToChunks() {
+        var index = 0
+        var done = false
+        while done != true {
+            for i in 0..<characters.count{
+                if characters[i] != Character(" ") {
+                    //no space between characters
+                    chunks[index] = Character("\(chunks[index])\(characters[i])")
+                } else {
+                    //space between characters, move on to next chunk
+                    index += 1
+                }
+            }
+            done = true
+        }
+    }
+    func convertLineToBinary(_ line: Int)->Bool{
+        switch accessArray(line) {
+        //HINT FROM MR.STULIN
+        case movrr:
+            break
+        case movmr:
+            break
+        //CONTINUE
+        default:
+            print("ERROR Unknown instruction \"\(arrayOfLines[line])\" at line \(line)")
+            return true
+        }
+        if (error != 0) {
+            print("ERROR #\(error) \(errorMessages[error]) at line \(line) (instruction \(accessArray(line)))");
+            error = 0;
+            return true;
+        }
+        return false;
+    }
+    func assemble() {
+        while true {
+            //execute the current line and note if it is a halt
+            let halt = convertLineToBinary(currentLine);
+            //halt if the current instruction is halt
+            if (halt) {
+                break
+            }
+            //and of course increment the current line
+            currentLine += 1;
+        }
+    }
 }

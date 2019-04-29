@@ -11,15 +11,15 @@ enum TokenType {
     case Directive
     case BadToken
 }
-
-struct Token: CustomStringConvertible {
+//Modification: Original had CustomStringConvertible but it was causing errors
+struct Token {
     let type: TokenType
     let intValue: Int?
     let stringValue: String?
     let tupleValue: Tuple?
 }
-
-struct Tuple: CustomStringConvertible {
+//Modification: Original had CustomStringConvertible but it was causing errors
+struct Tuple {
     let currentState: Int
     let inputCharacter: Int
     let newState: Int
@@ -61,13 +61,17 @@ class Assembler {
         error = 1
         return "" //TODO: make this crash
     }
-    var characters: [Character] = []
-    var chunks: [Character] = []
     //CONTINUE
-    func TranslateLineToCharacters(_ line: Int) {
-        
+    func TranslateLineToCharacters(_ line: String) -> [Character] {
+        var characters: [Character] = []
+        let strings: [String] = splitStringIntoParts(expression: line)
+        for i in 0..<strings.count{
+            characters.append(Character(strings[i]))
+        }
+        return characters
     }
-    func TranslateToChunks() {
+    func TranslateToChunks(_ characters: [Character]) -> [Character]{
+        var chunks: [Character] = []
         var index = 0
         var done = false
         while done != true {
@@ -82,85 +86,88 @@ class Assembler {
             }
             done = true
         }
+        return chunks
     }
-    enum instruction {
-        case halt
-        case clrr
-        case clrx
-        case clrm
-        case clrb
-        case movir
-        case movrr
-        case movrm
-        case movmr
-        case movxr
-        case movar
-        case movb
-        case addir
-        case addrr
-        case addmr
-        case addxr
-        case subir
-        case subrr
-        case submr
-        case subxr
-        case mulir
-        case mulrr
-        case mulmr
-        case mulxr
-        case divir
-        case divrr
-        case divmr
-        case divxr
-        case jmp
-        case sojz
-        case sojnz
-        case aojz
-        case aojnz
-        case cmpir
-        case cmprr
-        case cmpmr
-        case jmpn
-        case jmpz
-        case jmpp
-        case jsr
-        case ret
-        case push
-        case pop
-        case stackc
-        case outci
-        case outcr
-        case outcx
-        case outcb
-        case readi
-        case printi
-        case readc
-        case readln
-        case brk
-        case movrx
-        case movxx
-        case outs
-        case nop
-        case jmpne
+    enum instruction: Int {
+        case halt = 0
+        case clrr = 1
+        case clrx = 2
+        case clrm = 3
+        case clrb = 4
+        case movir = 5
+        case movrr = 6
+        case movrm = 7
+        case movmr = 8
+        case movxr = 9
+        case movar = 10
+        case movb = 11
+        case addir = 12
+        case addrr = 13
+        case addmr = 14
+        case addxr = 15
+        case subir = 16
+        case subrr = 17
+        case submr = 18
+        case subxr = 19
+        case mulir = 20
+        case mulrr = 21
+        case mulmr = 22
+        case mulxr = 23
+        case divir = 24
+        case divrr = 25
+        case divmr = 26
+        case divxr = 27
+        case jmp = 28
+        case sojz = 29
+        case sojnz = 30
+        case aojz = 31
+        case aojnz = 32
+        case cmpir = 33
+        case cmprr = 34
+        case cmpmr = 35
+        case jmpn = 36
+        case jmpz = 37
+        case jmpp = 38
+        case jsr = 39
+        case ret = 40
+        case push = 41
+        case pop = 42
+        case stackc = 43
+        case outci = 44
+        case outcr = 45
+        case outcx = 46
+        case outcb = 47
+        case readi = 48
+        case printi = 49
+        case readc = 50
+        case readln = 51
+        case brk = 52
+        case movrx = 53
+        case movxx = 54
+        case outs = 55
+        case nop = 56
+        case jmpne = 57
     }
+    let path = "BinaryCode.txt"
     func convertLineToBinary(_ line: Int)->Bool{
-        switch accessArray(line) {
-        //HINT FROM MR.STULIN
-        case movrr:
-            break
-        case movmr:
-            break
-        //CONTINUE
-        default:
-            print("ERROR Unknown instruction \"\(arrayOfLines[line])\" at line \(line)")
-            return true
+        //function converts a line of assembly code to binary code
+        //checks if line exceeds the number of lines in the assembly code
+        if line >= arrayOfLines.count {
+            return false
         }
-        if (error != 0) {
-            print("ERROR #\(error) \(errorMessages[error]) at line \(line) (instruction \(accessArray(line)))");
-            error = 0;
-            return true;
+        let characters: [Character] = TranslateLineToCharacters(arrayOfLines[line])
+        let chunks: [Character] = TranslateToChunks(characters)
+        var contents = ""
+        for i in 0..<chunks.count {
+            do {
+                contents = String(chunks[i])
+                try contents.write(toFile: path, atomically: false, encoding: .utf8)
+            }
+            catch let error as NSError {
+                print("Unable to save to file: \(error)")
+            }
         }
-        return false;
+        return true
     }
     func assemble() {
         while true {

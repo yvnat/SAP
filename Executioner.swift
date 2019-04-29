@@ -85,7 +85,7 @@ class Executioner {
         let input = readLine()
         writeRegister(register, (input?.count)!)
         var i = 0
-        for char in input {
+        for char in input! {
             writeMemory(memoryLocation + i, characterToUnicodeValue(char))
             i += 1;
         }
@@ -437,8 +437,13 @@ class Executioner {
             break
         case 48:
             //readi
-            writeMemory(accessMemory(line + 1), Int(readLine()!)!)
-            writeMemory(accessMemory(line + 2), ERROR CODE HERE)
+            var readi_input = Int(readLine()!)
+            if (readi_input == nil) {
+                writeRegister(accessMemory(line + 2), 1)
+                break
+            }
+            writeRegister(accessMemory(line + 1), readi_input!)
+            writeRegister(accessMemory(line + 2), 0)
             currentLine += 2
             break
         case 49:

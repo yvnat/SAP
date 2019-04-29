@@ -81,11 +81,12 @@ class Executioner {
             print(unicodeValueToCharacter(accessMemory(source + i)), terminator: "")
         }
     }
+    //WE NEED TO FIGURE OUT WHAT readln (51) DOES AND IF THE readLine()! IS NECESSARY
     func readString(_ memoryLocation: Int, _ register: Int) {
-        let input = readLine()
-        writeRegister(register, (input?.count)!)
+        let input = readLine()!
+        writeRegister(register, input.count)
         var i = 0
-        for char in input! {
+        for char in input {
             writeMemory(memoryLocation + i, characterToUnicodeValue(char))
             i += 1;
         }

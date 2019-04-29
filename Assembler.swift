@@ -83,6 +83,66 @@ class Assembler {
             done = true
         }
     }
+    enum instruction {
+        case halt
+        case clrr
+        case clrx
+        case clrm
+        case clrb
+        case movir
+        case movrr
+        case movrm
+        case movmr
+        case movxr
+        case movar
+        case movb
+        case addir
+        case addrr
+        case addmr
+        case addxr
+        case subir
+        case subrr
+        case submr
+        case subxr
+        case mulir
+        case mulrr
+        case mulmr
+        case mulxr
+        case divir
+        case divrr
+        case divmr
+        case divxr
+        case jmp
+        case sojz
+        case sojnz
+        case aojz
+        case aojnz
+        case cmpir
+        case cmprr
+        case cmpmr
+        case jmpn
+        case jmpz
+        case jmpp
+        case jsr
+        case ret
+        case push
+        case pop
+        case stackc
+        case outci
+        case outcr
+        case outcx
+        case outcb
+        case readi
+        case printi
+        case readc
+        case readln
+        case brk
+        case movrx
+        case movxx
+        case outs
+        case nop
+        case jmpne
+    }
     func convertLineToBinary(_ line: Int)->Bool{
         switch accessArray(line) {
         //HINT FROM MR.STULIN

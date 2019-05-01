@@ -2,6 +2,7 @@ import Foundation
 
 class Tokenizer {
     var tokens: [Token] = []
+    var parameters: [Character:Character] = [halt : _]
     private var characters: [Character] = []
     private var chunks: [Character] = []
     enum instruction: Int {
@@ -91,9 +92,21 @@ class Tokenizer {
         return chunks
     }
     func Tokenize(_ line: String) {
+        var chunk: String
         characters = TranslateLineToCharacters(line)
         chunks = TranslateToChunks(characters)
         for i in 0..<chunks.count {
+            chunk = String(chunk[i].lowercase())
+            //check for registers (contains r first and then a number)
+            if chunk.contains("r") {}
+            //check for LabelDefinition
+            //check for Label
+            //check for ImmediateString
+            //check for ImmediateInteger
+            //check for Instruction
+            //check for Directive
+            //check for BadToken
+            
             //if token is a valid instruction, convert characters to token
             if chunks[i] == instruction {}
             //else don't add it to the tokens array

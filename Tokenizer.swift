@@ -1,5 +1,24 @@
 import Foundation
 
+enum TokenType {
+    case Register
+    case LabelDefinition
+    case Label
+    case ImmediateString
+    case ImmediateInteger
+    case ImmediateTuple
+    case Instruction
+    case Directive
+    case BadToken
+}
+//Modification: Original had CustomStringConvertible because it was causing errors
+struct Token {
+    let type: TokenType
+    let intValue: Int?
+    let stringValue: String?
+    let tupleValue: Tuple?
+}
+
 class Tokenizer {
     var tokens: [Token] = []
     var parameters: [Character:Character] = [halt : _]
@@ -96,19 +115,28 @@ class Tokenizer {
         characters = TranslateLineToCharacters(line)
         chunks = TranslateToChunks(characters)
         for i in 0..<chunks.count {
-            chunk = String(chunk[i].lowercase())
+            chunk = String(chunk[i]).lowercased()
             //check for registers (contains r first and then a number)
-            if chunk.contains("r") {}
+            if chunk.contains("r") {tokens.append(Token(type: TokenType.Register, intValue: nil, stringValue: chunk, tupleValue: nil))}
             //check for LabelDefinition
+            tokens.append(Token(type: TokenType.LabelDefinition, intValue: nil, stringValue: chunk, tupleValue: nil))
             //check for Label
+            tokens.append(Token(type: TokenType.Label, intValue: nil, stringValue: chunk, tupleValue: nil))
+            //IF NOTHING ELSE THEN IT IS A LABEL
             //check for ImmediateString
+            tokens.append(Token(type: TokenType.ImmediateString, intValue: nil, stringValue: chunk, tupleValue: nil))
             //check for ImmediateInteger
+            tokens.append(Token(type: TokenType.ImmediateInteger, intValue: Int(chunk), stringValue: nil, tupleValue: nil))
             //check for Instruction
+            if chunk.contains(instruction) {tokens.append(Token(type: TokenType.Instruction, intValue: nil, stringValue: chunk, tupleValue: nil))}
             //check for Directive
+            //??
+            tokens.append(Token(type: TokenType.Directive, intValue: nil, stringValue: nil, tupleValue: nil))
             //check for BadToken
+            //??
+            tokens.append(Token(type: TokenType.BadToken, intValue: nil, stringValue: nil, tupleValue: nil))
             
             //if token is a valid instruction, convert characters to token
-            if chunks[i] == instruction {}
             //else don't add it to the tokens array
         }
     }

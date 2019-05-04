@@ -1,23 +1,5 @@
 import Foundation
 
-enum TokenType {
-    case Register
-    case LabelDefinition
-    case Label
-    case ImmediateString
-    case ImmediateInteger
-    case ImmediateTuple
-    case Instruction
-    case Directive
-    case BadToken
-}
-//Modification: Original had CustomStringConvertible because it was causing errors
-struct Token {
-    let type: TokenType
-    let intValue: Int?
-    let stringValue: String?
-    let tupleValue: Tuple?
-}
 //Modification: Original had CustomStringConvertible because it was causing errors
 struct Tuple {
     let currentState: Int
@@ -74,7 +56,7 @@ class Assembler {
         var contents = ""
         for i in 0..<tokens.tokens.count {
             do {
-                contents = String(tokens.tokens[i])
+                contents = String(describing: tokens.tokens[i])
                 try contents.write(toFile: path, atomically: false, encoding: .utf8)
             }
             catch let error as NSError {

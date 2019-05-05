@@ -1,4 +1,4 @@
-
+//will this work now?
 import Foundation
 // import Glibc
 func characterToUnicodeValue(_ c: Character)->Int {

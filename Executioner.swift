@@ -156,162 +156,162 @@ class Executioner {
         //note: memory[line + 1] = nextLine, memory[line + 2] = nextNextLine
         //I didn't make variables with those names so it doesn't cause crashes when
         //trying to access things outside memory if no arguments are needed for the instruction
-        switch accessMemory(line) {
-        case 1:
+        switch instruction(rawValue: accessMemory(line))! {
+        case instruction.clrr:
             //clrr
             writeRegister(accessMemory(line + 1), 0)
             currentLine += 1
             break
-        case 2:
+        case instruction.clrx:
             //clrx
             writeRegister(accessRegister(accessMemory(line + 1)),0)
             break
-        case 3:
+        case instruction.clrm:
             //clrm
             writeMemory(accessMemory(line + 1), 0)
             break
-        case 4:
+        case instruction.clrb:
             //clrb
             //for i in initialPosition..<(initialPosition + count)
             for i in accessMemory(line + 1)..<(accessMemory(line + 1) + accessMemory(line + 2)) {
                 writeMemory(i, 0)
             }
             break
-        case 5:
+        case instruction.movir:
             //movir
             // registers[memory[line + 2]] = registers[accessMemory(line + 1)]  //this seems wrong
             writeRegister(accessMemory(line+2), accessMemory(line+1))
             currentLine += 2
             break
-        case 6:
+        case instruction.movrr:
             //movrr
             // registers[memory[line + 2]] = registers[accessMemory(line + 1)]
             writeRegister(accessMemory(line+2), accessRegister(accessMemory(line+1)))
             currentLine += 2
             break
-        case 7:
+        case instruction.movrm:
             //movrm
             // memory[memory[line + 2]] = registers[accessMemory(line + 1)]
             writeMemory(accessMemory(line+2), accessRegister(accessMemory(line+1)))
             currentLine += 2
             break
-        case 8:
+        case instruction.movmr:
             //movmr
             // print("registers[\(memory[line + 2])] = memory[\(accessMemory(line + 1))]")
             // registers[memory[line + 2]] = memory[accessMemory(line + 1)]
             writeRegister(accessMemory(line+2), accessMemory(accessMemory(line + 1)))
             currentLine += 2
             break;
-        case 9:
+        case instruction.movxr:
             //movxr
             writeRegister(accessMemory(line+2), accessMemory(accessRegister(accessMemory(line + 1))))
             currentLine += 2
             break
-        case 10:
+        case instruction.movar:
             //movar
             writeRegister(accessMemory(line+2), accessMemory(line + 1))
             currentLine += 2
             break
-        case 11:
+        case instruction.movb:
             //movb
             moveBlock(accessRegister(accessMemory(line + 1)), accessRegister(accessMemory(line + 2)), accessRegister(accessMemory(line + 2)))
             currentLine += 3
             break
-        case 12:
+        case instruction.addir:
             //addir
             writeRegister(accessMemory(line + 2), accessRegister(accessMemory(line + 2)) + accessMemory(line + 1))
             currentLine += 2
             break;
-        case 13:
+        case instruction.addrr:
             //addrr
             writeRegister(accessMemory(line + 2), accessRegister(accessMemory(line + 2)) + accessRegister(accessMemory(line + 1)))
             currentLine += 2
             break;
-        case 14:
+        case instruction.addmr:
             //addmr
             // registers[memory[line + 2]] += memory[accessMemory(line + 1)]
             writeRegister(accessMemory(line + 2), accessMemory(line + 2) + accessMemory(accessMemory(line + 1)))
             currentLine += 2
             break
-        case 15:
+        case instruction.addxr:
             //addxr
             writeRegister(accessMemory(line+2), accessRegister(accessMemory(line+2)) - accessMemory(accessRegister(accessMemory(line+1))))
             currentLine += 2;
             break
-        case 16:
+        case instruction.subir:
             //subir
             // registers[memory[line + 2]] -= accessMemory(line + 1)
             writeRegister(accessMemory(line + 2), accessRegister(accessMemory(line + 2)) - accessMemory(line + 1))
             currentLine += 2
             break
-        case 17:
+        case instruction.subrr:
             //subrr
             // registers[memory[line + 2]] -= registers[accessMemory(line + 1)]
             writeRegister(accessMemory(line + 2), accessRegister(accessMemory(line + 2)) - accessRegister(accessMemory(line + 1)))
             currentLine += 2
             break
-        case 18:
+        case instruction.submr:
             //submr
             // registers[memory[line + 2]] -= memory[accessMemory(line + 1)]
             writeRegister(accessMemory(line + 2), accessMemory(line + 2) - accessMemory(accessMemory(line + 1)))
             currentLine += 2
             break
-        case 19:
+        case instruction.subxr:
             //subxr
             writeRegister(accessMemory(line+2), accessRegister(accessMemory(line+2)) - accessMemory(accessRegister(accessMemory(line+1))))
             currentLine += 2
             break
-        case 20:
+        case instruction.mulir:
             //mulir
             // registers[memory[line + 2]] *= accessMemory(line + 1)
             writeRegister(accessMemory(line+2), accessRegister(accessMemory(line + 2)) * accessMemory(line + 1))
             currentLine += 2
             break
-        case 21:
+        case instruction.mulrr:
             //mulrr
             // registers[memory[line + 2]] *= registers[accessMemory(line + 1)]
             writeRegister(accessMemory(line + 2), accessRegister(accessMemory(line + 2)) * accessRegister(accessMemory(line + 1)))
             currentLine += 2
             break
-        case 22:
+        case instruction.mulmr:
             //mulmr
             // registers[memory[line + 2]] *= memory[accessMemory(line + 1)]
             writeRegister(accessMemory(line + 2), accessMemory(line + 2) * accessMemory(accessMemory(line + 1)))
             currentLine += 2
             break
-        case 23:
+        case instruction.mulxr:
             //mulxr
             writeRegister(accessMemory(line+2), accessRegister(accessMemory(line+2)) * accessMemory(accessRegister(accessMemory(line+1))))
             currentLine += 2
             break
-        case 24:
+        case instruction.divir:
             //divir
             // registers[memory[line + 2]] /= accessMemory(line + 1)
             writeRegister(accessMemory(line+2), divide(accessRegister(accessMemory(line + 2)), accessMemory(line + 1)));
             currentLine += 2
             break
-        case 25:
+        case instruction.divrr:
             //divrr
             // registers[memory[line + 2]] /= registers[accessMemory(line + 1)]
             writeRegister(accessMemory(line+2), divide(accessRegister(accessMemory(line + 2)), accessRegister(accessMemory(line + 1))))
             currentLine += 2
             break
-        case 26:
+        case instruction.divmr:
             //divmr
             // registers[memory[line + 2]] /= memory[accessMemory(line + 1)]
             writeRegister(accessMemory(line+2), divide(accessMemory(line + 2), accessMemory(accessMemory(line + 1))))
             currentLine += 2
             break
-        case 27:
+        case instruction.divxr:
             //divxr
             writeRegister(accessMemory(line+2), divide(accessRegister(accessMemory(line+2)), accessMemory(accessRegister(accessMemory(line+1)))))
             currentLine += 2
             break
-        case 28:
+        case instruction.jmp:
             //jmp
             currentLine = accessMemory(line + 1) - 1
             break
-        case 29:
+        case instruction.sojz:
             //sojz
             writeRegister(accessMemory(line + 1), accessRegister(accessMemory(line + 1)) - 1)
             if (accessRegister(accessMemory(line + 1)) == 0) {
@@ -320,7 +320,7 @@ class Executioner {
             }
             currentLine += 2;
             break
-        case 30:
+        case instruction.sojnz:
             //sojnz
             writeRegister(accessMemory(line + 1), accessRegister(accessMemory(line + 1)) - 1)
             if (accessRegister(accessMemory(line + 1)) != 0) {
@@ -329,7 +329,7 @@ class Executioner {
             }
             currentLine += 2;
             break
-        case 31:
+        case instruction.aojz:
             //aojz
             writeRegister(accessMemory(line + 1), accessRegister(accessMemory(line + 1)) + 1)
             if (accessRegister(accessMemory(line + 1)) == 0) {
@@ -338,7 +338,7 @@ class Executioner {
             }
             currentLine += 2;
             break
-        case 32:
+        case instruction.aojnz:
             //aojnz
             writeRegister(accessMemory(line + 1), accessRegister(accessMemory(line + 1)) + 1);
             if (accessRegister(accessMemory(line + 1)) != 0) {
@@ -347,21 +347,21 @@ class Executioner {
             }
             currentLine += 2;
             break
-        case 33:
+        case instruction.cmpir:
             //cmpir
             compare = accessMemory(line + 1) - accessRegister(accessMemory(line + 2));
             break
-        case 34:
+        case instruction.cmprr:
             //cmprr
             compare = accessRegister(accessMemory(line + 1)) - accessRegister(accessMemory(line + 2));
             currentLine += 2
             break
-        case 35:
+        case instruction.cmpmr:
             //cmpmr
             compare = accessMemory(accessMemory(line + 1)) - accessRegister(accessMemory(line + 2))
             currentLine += 2
             break
-        case 36:
+        case instruction.jmpn:
             //jmpn
             if compare < 0 {
                 currentLine = accessMemory(line + 1) - 1;
@@ -369,7 +369,7 @@ class Executioner {
                 break
             }
             break
-        case 37:
+        case instruction.jmpz:
             //jmpz
             if compare == 0 {
                 currentLine = accessMemory(line + 1) - 1;
@@ -377,7 +377,7 @@ class Executioner {
                 break
             }
             break
-        case 38:
+        case instruction.jmpp:
             //jmpp
             if compare > 0 {
                 currentLine = accessMemory(line + 1) - 1;
@@ -386,14 +386,14 @@ class Executioner {
             }
             currentLine += 2;
             break
-        case 39:
+        case instruction.jsr:
             //jsr
             currentLine = accessMemory(line + 1) - 1
             for index in 5...9 {
                 stack.push(registers[index])
             }
             break
-        case 40:
+        case instruction.ret:
             //ret
             var index = 5
             while index != 10 {
@@ -401,15 +401,15 @@ class Executioner {
                 index += 1
             }
             break
-        case 41:
+        case instruction.push:
             //push
             stack.push(1)
             break
-        case 42:
+        case instruction.pop:
             //pop
             stack.pop()
             break
-        case 43:
+        case instruction.stackc:
             //stackc
             let count = stack.array.count
             if count == 0 {writeMemory(line + 1, 2)}
@@ -417,27 +417,27 @@ class Executioner {
             if count >= stack.size {writeMemory(line + 1, 1)}
             currentLine += 1
             break
-        case 44:
+        case instruction.outci:
             //outci
             print(accessMemory(line + 1))
             currentLine += 1
             break
-        case 45:
+        case instruction.outcr:
             //outcr
             print(unicodeValueToCharacter(accessRegister(accessMemory(line + 1))), terminator: "") //prints it as a character, not a number
             currentLine += 1
             break
-        case 46:
+        case instruction.outcx:
             //outcx
             print(unicodeValueToCharacter(accessMemory(accessRegister(accessMemory(line + 1)))), terminator: "")
             currentLine += 1
             break
-        case 47:
+        case instruction.outcb:
             //outcb
             printBlock(accessRegister(accessMemory(line + 1)), accessRegister(accessMemory(line + 2)))
             currentLine += 2
             break
-        case 48:
+        case instruction.readi:
             //readi
             var readi_input = Int(readLine()!)
             if (readi_input == nil) {
@@ -448,44 +448,44 @@ class Executioner {
             writeRegister(accessMemory(line + 2), 0)
             currentLine += 2
             break
-        case 49:
+        case instruction.printi:
             //printi
             print(String(accessRegister(accessMemory(line + 1))), terminator: "")
             currentLine += 1
             break;
-        case 50:
+        case instruction.readc:
             //readc
             writeMemory(1, accessMemory(line + 1))
             currentLine += 1
             break
-        case 51:
+        case instruction.readln:
             //readln
             readString(accessMemory(line + 1), accessMemory(line + 2))
             currentLine += 2
             break
-        case 52:
+        case instruction.brk:
             //brk
             break
-        case 53:
+        case instruction.movrx:
             //movrx
             writeMemory(accessRegister(accessMemory(line + 2)), accessRegister(accessMemory(line + 1)))
             currentLine += 2
             break
-        case 54:
+        case instruction.movxx:
             //movxx
             writeMemory(accessRegister(accessMemory(line + 2)), accessMemory(accessRegister(accessMemory(line + 1))))
             currentLine += 2;
             break
-        case 55:
+        case instruction.outs:
             // outs
             print(getStringFromLocation(accessMemory(line + 1)), terminator: "")
             currentLine += 1
             break
-        case 56:
+        case instruction.nop:
             //nop
             //literally does nothing :/
             break
-        case 57:
+        case instruction.jmpne:
             //jmpne
             //if compare was not equal:
             if compare != 0 {

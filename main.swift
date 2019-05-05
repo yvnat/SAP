@@ -113,11 +113,11 @@ func readFromFile(path: String?, specificClass: String){
                 executioner.execute()
             }
             if specificClass == "assembler" {
-                let contents = try String(contentsOfFile: filePath, encoding: String.Encoding.utf8);
-                let lines = contents.components(separatedBy: "\n")
-                let assembler = Assembler()
-                assembler.loadProgram(lines)
-                assembler.assemble()
+//                let contents = try String(contentsOfFile: filePath, encoding: String.Encoding.utf8);
+//                let lines = contents.components(separatedBy: "\n")
+//                let assembler = Assembler()
+//                assembler.loadProgram(lines)
+//                assembler.assemble()
             }
         }
         catch {
@@ -130,7 +130,9 @@ func readFromFile(path: String?, specificClass: String){
 }
 
 //TEST CODE:
-readFromFile(path: "/Users/andrewstadnicki/Desktop/Doubles.txt", specificClass: "executioner")
+var t = Tokenizer();
+print(t.Tokenize("jerry: r9 r10 \"hello world\" .st #2007 .strINg / 0 1 1 0 r / movmr movmregister \"my favourite tuple is / 1 1 1 1 l / \""));
+//readFromFile(path: "/Users/andrewstadnicki/Desktop/Doubles.txt", specificClass: "executioner")
 //Andrew's computer: /Users/andrewstadnicki/Desktop/Doubles.txt
 //Computer at school: /Users/STUDENT ID NUMBER HERE/Desktop/Doubles.txt
 //linux vm: Doubles.txt

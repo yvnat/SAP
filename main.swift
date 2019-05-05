@@ -131,7 +131,13 @@ func readFromFile(path: String?, specificClass: String){
 
 //TEST CODE:
 var t = Tokenizer();
-print(t.Tokenize("jerry: r9 r10 \"hello world\" .st #2007 .strINg / 0 1 1 0 r / movmr movmregister \"my favourite tuple is / 1 1 1 1 l / \""));
+var x = t.Tokenize("jerry: r9 r10 \"hello world\" .st #2007 .strINg / 0 1 1 0 r / movmr movmregister \"my favourite tuple is / 1 1 1 1 l / \"");
+print(x)
+var a = Assembler();
+a.verifyLine(x, 1);
+a.verifyLine(t.Tokenize("margaret: movrr r1 r3;this here's what i like to call a comment"), 2);
+a.verifyLine(t.Tokenize("margaret: movrr r1 r3;this here's what i like to call a comment"), 3);
+print(a.errors);
 //readFromFile(path: "/Users/andrewstadnicki/Desktop/Doubles.txt", specificClass: "executioner")
 //Andrew's computer: /Users/andrewstadnicki/Desktop/Doubles.txt
 //Computer at school: /Users/STUDENT ID NUMBER HERE/Desktop/Doubles.txt

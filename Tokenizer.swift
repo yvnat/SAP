@@ -10,6 +10,7 @@ enum TokenType {
     case Instruction
     case Directive
     case BadToken
+    case Data   //this is only used by the assembler
 }
 //Modification: Original had CustomStringConvertible because it was causing errors
 struct Token: CustomStringConvertible {
@@ -18,21 +19,21 @@ struct Token: CustomStringConvertible {
     let stringValue: String?
     let tupleValue: Tuple?
     var description: String {
-        var desc = "{\(self.type)";
+        var desc = "\(self.type)";
         if (intValue != nil) {
-            desc += " \(intValue!)";
+            desc += " #\(intValue!)";
         }
         if (stringValue != nil) {
-            desc += " \(stringValue!)";
+            desc += " \"\(stringValue!)\"";
         }
         if (tupleValue != nil) {
-            desc += " \(tupleValue!)";
+            desc += " / \(tupleValue!) /";
         }
-        return desc + "}";
+        return desc;
     }
 }
 //;state|input|next state|write|dir
-struct Tuple {
+struct Tuple: CustomStringConvertible {
     var state: Int
     var input: Character;
     var nextState: Int;
@@ -44,6 +45,9 @@ struct Tuple {
         self.nextState = nextState;
         self.write = write;
         self.dir = dir;
+    }
+    var description: String {
+        return "\(state) \(input) \(nextState) \(write) \(dir)"
     }
 }
 //any reasonable language will let you treat a string as an array of chars, making this class pointless. Alas, swift is not a reasonable language.
@@ -100,6 +104,10 @@ class Tokenizer {
             }
             if (i == "/") {
                 if (!inString){inTuple = !inTuple}
+            }
+            //a comment is the same as a linebreak, assuming it is in neither a string nor a tuple
+            if (i == ";" && !inTuple && !inString) {
+                break;
             }
             word.append(i);
         }
@@ -185,8 +193,8 @@ class Tokenizer {
         return nil;
     }
     func chunkToLabel(_ c: Chunk)->Token? {
-        //a label cannot start with . / # or "
-        if (c.chars[0] == "." || c.chars[0] == "/" || c.chars[0] == "#" || c.chars[0] == "\"") {
+        //a label cannot start with something that's not a letter
+        if (!CharacterSet.letters.contains(Unicode.Scalar(characterToUnicodeValue(c.chars[0]))!)) {
             return nil;
         }
         //a label cannot be a register or a label definition or an instruction
@@ -196,8 +204,8 @@ class Tokenizer {
         return Token(type: .Label, intValue: nil, stringValue: c.string, tupleValue: nil)
     }
     func chunkToLabelDefinition(_ c: Chunk)->Token? {
-        //a label cannot start with . / # or "
-        if (c.chars[0] == "." || c.chars[0] == "/" || c.chars[0] == "#" || c.chars[0] == "\"") {
+        //a label cannot start with something that's not a letter
+        if (!CharacterSet.letters.contains(Unicode.Scalar(characterToUnicodeValue(c.chars[0]))!)) {
             return nil;
         }
         //a label cannot be a register or an instruction

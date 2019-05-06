@@ -23,7 +23,7 @@ class Executioner {
     }
     
     //stack
-    var stack = IntStack(size: 10)
+    var stack = IntStack(size: 1000)
     
     //shortcut for accessing strings
     var symbolsToStrings: [Int : String] = [:]
@@ -388,33 +388,64 @@ class Executioner {
             break
         case instruction.jsr:
             //jsr
-            currentLine = accessMemory(line + 1) - 1
             for index in 5...9 {
+                if (stack.isFull()) {
+                    error = 4;
+                    break;
+                }
                 stack.push(registers[index])
             }
+            if (stack.isFull()) {
+                error = 4;
+                break;
+            }
+            stack.push(currentLine);
+            currentLine = accessMemory(line + 1) - 1
             break
         case instruction.ret:
             //ret
+            var popResult = stack.pop();
+            if (popResult == nil) {
+                error = 5;
+                break;
+            }
+            currentLine = popResult!
             var index = 5
             while index != 10 {
-                stack.pop()
+                popResult = stack.pop();
+                if (popResult == nil) {
+                    error = 5;
+                    break;
+                }
+                registers[index] = popResult!
                 index += 1
             }
             break
         case instruction.push:
             //push
-            stack.push(1)
+            if (stack.isFull()) {
+                error = 4;
+                break;
+            }
+            stack.push(accessRegister(accessMemory(line + 1)));
+            currentLine += 1
             break
         case instruction.pop:
             //pop
-            stack.pop()
+            let popResult = stack.pop();
+            if (popResult == nil) {
+                error = 5;
+                break;
+            }
+            writeRegister(accessMemory(line + 1), popResult!);
+            currentLine += 1
             break
         case instruction.stackc:
             //stackc
             let count = stack.array.count
-            if count == 0 {writeMemory(line + 1, 2)}
-            if count != 0 && count < stack.size {writeMemory(line + 1, 0)}
-            if count >= stack.size {writeMemory(line + 1, 1)}
+            if count == 0 {writeRegister(accessMemory(line + 1), 2)}
+            if count != 0 && count < stack.size {writeRegister(accessMemory(line + 1), 0)}
+            if count >= stack.size {writeRegister(accessMemory(line + 1), 1)}
             currentLine += 1
             break
         case instruction.outci:

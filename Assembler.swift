@@ -6,12 +6,6 @@ func splitStringIntoParts(expression: String)->[String]{
 func splitStringIntoLines(expression: String)->[String]{
     return expression.characters.split{$0 == "\r" || $0 == "\n"}.map{ String($0) }
 }
-/*
- for i in tokenLine
-     checkIfTokensValid()
-     markLabels()
- 
- */
 class Assembler {
     var instructionParameters: [instruction : [TokenType]] = [
         .halt:[],
@@ -83,8 +77,9 @@ class Assembler {
     ]
     var symbolsTable: [String:Int] = [:];
     var program: [Token] = [];
-    var errors = "Compile Errors:\n";
-    
+    var errors = "";
+    var startLocation: String? = nil;
+    var wasEnded = false;   //set to true if encounters the .end directive
     var arrayOfLines: [String] = []
     var error = 1
     //WE NEED ERROR CHECKING
@@ -109,7 +104,7 @@ class Assembler {
     }
     //;state|input|next state|write|dir
     func addTupleToMemory(_ token: Token) {
-        var tuple = token.tupleValue!;
+        let tuple = token.tupleValue!;
         program.append(Token(type: TokenType.Data, intValue: tuple.state, stringValue: nil, tupleValue: nil));
         program.append(Token(type: TokenType.Data, intValue: characterToUnicodeValue(tuple.input), stringValue: nil, tupleValue: nil));
         program.append(Token(type: TokenType.Data, intValue: tuple.nextState, stringValue: nil, tupleValue: nil));
@@ -117,7 +112,7 @@ class Assembler {
         program.append(Token(type: TokenType.Data, intValue: characterToUnicodeValue(tuple.dir), stringValue: nil, tupleValue: nil));
     }
     func allocateMemory(_ token: Token) {
-        for i in 0..<token.intValue! {
+        for _ in 0..<token.intValue! {
             program.append(Token(type: TokenType.Data, intValue: 0, stringValue: nil, tupleValue: nil))
         }
     }
@@ -187,8 +182,12 @@ class Assembler {
             var i = 0;
             let directiveType = line[index].stringValue!
             var parameters = directiveParameters[directiveType]!
-            program.append(line[index])
             index += 1;
+            //immediately stop on .end
+            if (directiveType == ".end") {
+                wasEnded = true;
+                return true;
+            }
             //loop through parameters, ensuring they match expected ones
             while (index < line.count && i < parameters.count) {
                 if (parameters[i] != line[index].type) {
@@ -214,6 +213,9 @@ class Assembler {
                 if (directiveType == ".integer") {
                     program.append(line[index])
                 }
+                if (directiveType == ".start") {
+                    startLocation = line[index].stringValue!;
+                }
                 index += 1;
                 i += 1;
             }
@@ -233,18 +235,54 @@ class Assembler {
             errors += "[Line \(lineNumber)] expected token #\(index + 1) to be instruction or directive; instead, it is \(line[index].description)\n";
             return false;
         }
-        return true;
     }
-    let path = "BinaryCode.txt"
-//    func convertLineToBinary(_ line: Int)->Bool{
-//        //function converts a line of assembly code to binary code
-//        //checks if line exceeds the number of lines in the assembly code
-//        if line >= arrayOfLines.count {
-//            return false
-//        }
-//        let tokens = Tokenizer()
-//        tokens.Tokenize(arrayOfLines[line])
-//        //Write to file as binary code
+    func convertToBinary(_ stringProgram: String)->[Int]{
+        //function converts assembly code string to binary code
+        let tokenizer = Tokenizer()
+        //split the program into individual lines
+        let lines = splitStringIntoLines(expression: stringProgram);
+        /////////////pass one: get tokens, verify that they make sense
+        for i in 0..<lines.count {
+            let tokens = tokenizer.Tokenize(lines[i]);
+            verifyLine(tokens, i + 1);
+            if (wasEnded) {
+                break;
+            }
+        }
+        //post pass one error checking
+        //check if all labels are accounted for
+        for (symbol, location) in symbolsTable {
+            if (location == -1) {
+                errors += "[symbolTable] symbol \(symbol) mentioned but never defined\n";
+            }
+        }
+        //check if there were any errors during line verification
+        if (errors != "")  {
+            return []
+        }
+        /////////////pass two: convert tokens to binary
+        var assembledProgram: [Int] = [];
+        for i in program {
+            if (i.type == TokenType.Instruction || i.type == TokenType.ImmediateInteger || i.type == TokenType.Data || i.type == TokenType.Register) {
+                assembledProgram.append(i.intValue!);
+            }
+            else if (i.type == TokenType.Label) {
+                assembledProgram.append(symbolsTable[i.stringValue!]!);
+            } else {
+                //this should not happen
+                print("UNEXPECTED TOKEN TYPE \(i.type) IN PROGRAM AFTER FIRST PASS");
+                return [];
+            }
+        }
+        //just add count and start location
+        assembledProgram.insert(assembledProgram.count, at: 0);
+        if (startLocation == nil) {
+            errors += "[dir] no start location specified. specify start location with \".start <label>\""
+            return [];
+        }
+        assembledProgram.insert(symbolsTable[startLocation!]!, at: 1);
+        return assembledProgram;
+        //Write to file as binary code
 //        var contents = ""
 //        for i in 0..<tokens.tokens.count {
 //            do {
@@ -255,19 +293,36 @@ class Assembler {
 //                print("Unable to save to file: \(error)")
 //            }
 //        }
-//        return true
-//    }
-//    func assemble() {
-//        while true {
-//            //execute the current line and note if it is a halt
-//            let halt = convertLineToBinary(currentLine);
-//            //halt if the current instruction is halt
-//            if (halt) {
-//                break
-//            }
-//            //and of course increment the current line
-//            currentLine += 1;
-//        }
-//    }
+    }
+    func symbolsTableToString()->String {
+        var s = ""
+        for i in symbolsTable {
+            s += "\(i.key): \(i.value)\n";
+        }
+        return s;
+    }
+    //take a path to the code, output the files
+    func assemble(path: String) {
+        do {
+            let stringProgram = try String(contentsOfFile: "\(path).txt", encoding: String.Encoding.utf8);
+            let binaryCode = convertToBinary(stringProgram);
+            //if errors, write them to file
+            if (binaryCode == []) {
+                print("Assembly incomplete. See listing file for errors.")
+                try errors.write(toFile: "\(path).ls", atomically: false, encoding: .utf8)
+                return;
+            }
+            //if no errors, write program to file
+            var assembledProgram = "";
+            for i in binaryCode {
+                assembledProgram += "\(i)\n";
+            }
+            try assembledProgram.write(toFile: "\(path).bin", atomically: false, encoding: .utf8)
+            try symbolsTableToString().write(toFile: "\(path).ls", atomically: false, encoding: .utf8)
+            print("Assembly successful.")
+        }
+        catch {
+            print("Contents Failed To Load");
+        }
+    }
 }
-

@@ -92,7 +92,7 @@ class Tokenizer {
         let chars = stringToCharacters(line);
         var word = ""
         for i in chars {
-            if (i == " " && !inString && !inTuple) {
+            if ((i == "\t" || i == " ") && !inString && !inTuple) {
                 if (word != "") {
                     stringArray.append(word);
                     word = "";

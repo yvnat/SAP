@@ -1,3 +1,88 @@
+/*
+ 79
+ 43
+ 0
+ 20
+ 10
+ 26
+ 65
+ 32
+ 80
+ 114
+ 111
+ 103
+ 114
+ 97
+ 109
+ 32
+ 84
+ 111
+ 32
+ 80
+ 114
+ 105
+ 110
+ 116
+ 32
+ 68
+ 111
+ 117
+ 98
+ 108
+ 101
+ 115
+ 12
+ 32
+ 68
+ 111
+ 117
+ 98
+ 108
+ 101
+ 100
+ 32
+ 105
+ 115
+ 32
+ 8
+ 0
+ 8
+ 8
+ 1
+ 9
+ 8
+ 2
+ 0
+ 55
+ 3
+ 45
+ 0
+ 6
+ 8
+ 1
+ 13
+ 8
+ 1
+ 49
+ 8
+ 55
+ 30
+ 49
+ 1
+ 45
+ 0
+ 34
+ 8
+ 9
+ 12
+ 1
+ 8
+ 57
+ 56
+ 0
+
+ */
+
 //will this work now?
 import Foundation
 // import Glibc
@@ -130,15 +215,39 @@ func readFromFile(path: String?, specificClass: String){
 }
 
 //TEST CODE:
-var t = Tokenizer();
-var x = t.Tokenize("jerry: r9 r10 \"hello world\" .st #2007 .strINg / 0 1 1 0 r / movmr movmregister \"my favourite tuple is / 1 1 1 1 l / \"");
-print(x)
 var a = Assembler();
-a.verifyLine(x, 1);
-a.verifyLine(t.Tokenize("margaret: movrr r1 r3;this here's what i like to call a comment"), 2);
-a.verifyLine(t.Tokenize("margaret: movrr r1 r3;this here's what i like to call a comment"), 3);
-print(a.errors);
-//readFromFile(path: "/Users/andrewstadnicki/Desktop/Doubles.txt", specificClass: "executioner")
+var doubles = """
+.Start Test
+;doubles
+;a program to print doubles
+Begin: .Integer #0
+End: .Integer #20
+NewLine: .Integer #10
+IntroMess: .String "A program to print doubles"
+DoubleMess: .String " doubled is "
+;r0 will contain the newline character
+;there are some more comments about what the other registers will contain
+;this is really just to make sure the assembler ignores comments
+Test: movmr Begin r8
+movmr End r9
+movmr NewLine r0
+outs IntroMess
+outcr r0
+Do01: movrr r8 r1
+addrr r8 r1
+printi r8
+outs DoubleMess
+printi r1
+outcr r0
+cmprr r8 r9
+addir #1 r8
+jmpne do01
+wh01: halt
+.End
+"""
+var user = "andewstadnicki"
+var program = "Doubles"
+a.assemble(path: "/Users/\(user)/Desktop/\(program)")
+readFromFile(path: "/Users/\(user)/Desktop/\(program).bin", specificClass: "executioner")
 //Andrew's computer: /Users/andrewstadnicki/Desktop/Doubles.txt
 //Computer at school: /Users/STUDENT ID NUMBER HERE/Desktop/Doubles.txt
-//linux vm: Doubles.txt

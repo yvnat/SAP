@@ -147,7 +147,6 @@ class Executioner {
     //this executes one specific line
     //returns true on halt, false otherwise
     func executeLine(_ line: Int)->Bool {
-        // print("executing line \(line), which contains the instruction \(accessMemory(line))")
         //return false if halt
         if (accessMemory(line) == 0) {
             return true
@@ -160,6 +159,7 @@ class Executioner {
             print("ERROR Unknown instruction \"\(accessMemory(line))\" at line \(line)")
             return true
         }
+//        print("execusting line \(line), which contains the instruction \(accessMemory(line))/\(instruction(rawValue: accessMemory(line))!)")
         switch instruction(rawValue: accessMemory(line))! {
         case instruction.clrr:
             //clrr
@@ -354,6 +354,7 @@ class Executioner {
         case instruction.cmpir:
             //cmpir
             compare = accessMemory(line + 1) - accessRegister(accessMemory(line + 2));
+            currentLine += 2
             break
         case instruction.cmprr:
             //cmprr
@@ -372,6 +373,7 @@ class Executioner {
                 // print("currentLine - \(currentLine)")
                 break
             }
+            currentLine += 1;
             break
         case instruction.jmpz:
             //jmpz
@@ -380,6 +382,7 @@ class Executioner {
                 // print("currentLine - \(currentLine)")
                 break
             }
+            currentLine += 1;
             break
         case instruction.jmpp:
             //jmpp
@@ -388,7 +391,7 @@ class Executioner {
                 // print("currentLine - \(currentLine)")
                 break
             }
-            currentLine += 2;
+            currentLine += 1;
             break
         case instruction.jsr:
             //jsr
@@ -413,7 +416,7 @@ class Executioner {
                 error = 5;
                 break;
             }
-            currentLine = popResult!
+            currentLine = popResult! + 1    // + 1 to account for the fact that the next thing is jsr's argument
             var index = 5
             while index != 10 {
                 popResult = stack.pop();

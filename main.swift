@@ -216,38 +216,9 @@ func readFromFile(path: String?, specificClass: String){
 
 //TEST CODE:
 var a = Assembler();
-var doubles = """
-.Start Test
-;doubles
-;a program to print doubles
-Begin: .Integer #0
-End: .Integer #20
-NewLine: .Integer #10
-IntroMess: .String "A program to print doubles"
-DoubleMess: .String " doubled is "
-;r0 will contain the newline character
-;there are some more comments about what the other registers will contain
-;this is really just to make sure the assembler ignores comments
-Test: movmr Begin r8
-movmr End r9
-movmr NewLine r0
-outs IntroMess
-outcr r0
-Do01: movrr r8 r1
-addrr r8 r1
-printi r8
-outs DoubleMess
-printi r1
-outcr r0
-cmprr r8 r9
-addir #1 r8
-jmpne do01
-wh01: halt
-.End
-"""
 var user = "romaphile"
 var program = "Turing"
 a.assemble(path: "/Users/\(user)/Desktop/\(program)")
-readFromFile(path: "/Users/\(user)/Desktop/\(program).bin", specificClass: "executioner")
+readFromFile(path: "/Users/\(user)/Desktop/\(program).bin.txt", specificClass: "executioner")
 //Andrew's computer: /Users/andrewstadnicki/Desktop/Doubles.txt
 //Computer at school: /Users/STUDENT ID NUMBER HERE/Desktop/Doubles.txt

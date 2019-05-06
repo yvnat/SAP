@@ -321,8 +321,8 @@ class Assembler {
             for i in binaryCode {
                 assembledProgram += "\(i)\n";
             }
-            try assembledProgram.write(toFile: "\(path).bin", atomically: false, encoding: .utf8)
-            try symbolsTableToString().write(toFile: "\(path).ls", atomically: false, encoding: .utf8)
+            try assembledProgram.write(toFile: "\(path).bin.txt", atomically: false, encoding: .utf8)
+            try symbolsTableToString().write(toFile: "\(path).ls.txt", atomically: false, encoding: .utf8)
             print("Assembly successful.")
         }
         catch {

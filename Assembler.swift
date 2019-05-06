@@ -101,9 +101,25 @@ class Assembler {
         error = 1
         return "" //TODO: make this crash
     }
-    //this function handles directives like .allocate or .string that reserve memory. It does this by adding a bunch of "Data" tokens with the appropriate memory
-    func handleDirectiveMemory(_ parameter: Token) {
-        
+    func addStringToMemory(_ token: Token) {
+        program.append(Token(type: TokenType.Data, intValue: token.stringValue!.count, stringValue: nil, tupleValue: nil));
+        for i in token.stringValue! {
+            program.append(Token(type: TokenType.Data, intValue: characterToUnicodeValue(i), stringValue: nil, tupleValue: nil));
+        }
+    }
+    //;state|input|next state|write|dir
+    func addTupleToMemory(_ token: Token) {
+        var tuple = token.tupleValue!;
+        program.append(Token(type: TokenType.Data, intValue: tuple.state, stringValue: nil, tupleValue: nil));
+        program.append(Token(type: TokenType.Data, intValue: characterToUnicodeValue(tuple.input), stringValue: nil, tupleValue: nil));
+        program.append(Token(type: TokenType.Data, intValue: tuple.nextState, stringValue: nil, tupleValue: nil));
+        program.append(Token(type: TokenType.Data, intValue: characterToUnicodeValue(tuple.write), stringValue: nil, tupleValue: nil));
+        program.append(Token(type: TokenType.Data, intValue: characterToUnicodeValue(tuple.dir), stringValue: nil, tupleValue: nil));
+    }
+    func allocateMemory(_ token: Token) {
+        for i in 0..<token.intValue! {
+            program.append(Token(type: TokenType.Data, intValue: 0, stringValue: nil, tupleValue: nil))
+        }
     }
     //this function takes a line and verifies that it is correct
     func verifyLine(_ line: [Token], _ lineNumber: Int)->Bool {
@@ -150,7 +166,7 @@ class Assembler {
                     }
                 }
                 //handle program and memory
-                if (line[index].)
+                program.append(line[index]);
                 index += 1;
                 i += 1;
             }
@@ -185,7 +201,19 @@ class Assembler {
                         symbolsTable[line[index].stringValue!] = -1;
                     }
                 }
-                program.append(line[index])
+                //handle memory
+                if (directiveType == ".string") {
+                    addStringToMemory(line[index])
+                }
+                if (directiveType == ".tuple") {
+                    addTupleToMemory(line[index])
+                }
+                if (directiveType == ".allocate") {
+                    allocateMemory(line[index])
+                }
+                if (directiveType == ".integer") {
+                    program.append(line[index])
+                }
                 index += 1;
                 i += 1;
             }

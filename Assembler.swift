@@ -102,6 +102,10 @@ class Assembler {
             program.append(Token(type: TokenType.Data, intValue: characterToUnicodeValue(i), stringValue: nil, tupleValue: nil));
         }
     }
+    //takes r or l, returns 1 or 0
+    func convertDirToBool(_ c: Character)->Int {
+        return (c == "r") ? 1 : 0;
+    }
     //;state|input|next state|write|dir
     func addTupleToMemory(_ token: Token) {
         let tuple = token.tupleValue!;
@@ -109,7 +113,7 @@ class Assembler {
         program.append(Token(type: TokenType.Data, intValue: characterToUnicodeValue(tuple.input), stringValue: nil, tupleValue: nil));
         program.append(Token(type: TokenType.Data, intValue: tuple.nextState, stringValue: nil, tupleValue: nil));
         program.append(Token(type: TokenType.Data, intValue: characterToUnicodeValue(tuple.write), stringValue: nil, tupleValue: nil));
-        program.append(Token(type: TokenType.Data, intValue: characterToUnicodeValue(tuple.dir), stringValue: nil, tupleValue: nil));
+        program.append(Token(type: TokenType.Data, intValue: convertDirToBool(tuple.dir), stringValue: nil, tupleValue: nil));
     }
     func allocateMemory(_ token: Token) {
         for _ in 0..<token.intValue! {

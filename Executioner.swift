@@ -15,6 +15,7 @@ class Executioner {
     //1 = out of memory, 2 = div by 0, 3 = illegal register, 4 = stack overflow, 5 = stack empty
     var errorMessages = ["ERROR: NO ERROR", "Illegal memory address", "Divide by 0", "Illegal register", "Stack overflow", "Stack empty"]
     var error = 0;
+    var errorDetails = "";
     
     init() {
         for _ in 0..<20000 {
@@ -33,13 +34,16 @@ class Executioner {
         if (index >= 0 && index < memory.count) {
             return memory[index]
         }
+        errorDetails = " \(index)/\(memory.count)";
         error = 1;
         return 0; //TODO: make this crash
     }
     func writeMemory(_ index: Int, _ what: Int) {
         if (index >= 0 && index < memory.count) {
             memory[index] = what;
+            return;
         }
+        errorDetails = " \(index)/\(memory.count)";
         error = 1;
         // print(index)
         return; //TODO: make this crash
@@ -540,7 +544,7 @@ class Executioner {
             return true
         }
         if (error != 0) {
-            print("ERROR #\(error) \(errorMessages[error]) at line \(line) (instruction \(accessMemory(line)))");
+            print("ERROR #\(error) \(errorMessages[error])\(errorDetails) at line \(line) (instruction \(accessMemory(line)))");
             error = 0;
             return true;
         }

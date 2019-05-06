@@ -180,13 +180,13 @@ class Tokenizer {
             return nil;
         }
         var isValidTuple = true;    //checks if the potential tuple...
-        isValidTuple = isValidTuple && (explodedTuple[0] != "/");   //starts with /
+        isValidTuple = isValidTuple && (explodedTuple[0] == "/");   //starts with /
         isValidTuple = isValidTuple && (Int(explodedTuple[1]) != nil);  //is a valid int
         isValidTuple = isValidTuple && (explodedTuple[2].count == 1);   //is a valid character
         isValidTuple = isValidTuple && (Int(explodedTuple[3]) != nil);
         isValidTuple = isValidTuple && (explodedTuple[4].count == 1);
         isValidTuple = isValidTuple && (explodedTuple[5] == "r" || explodedTuple[5] == "l");    //is either r or l
-        isValidTuple = isValidTuple && (explodedTuple[6] != "/"); //ends with /
+        isValidTuple = isValidTuple && (explodedTuple[6] == "/"); //ends with /
         if (isValidTuple) {
             return Token(type: .ImmediateTuple, intValue: nil, stringValue: nil, tupleValue: Tuple(Int(explodedTuple[1])!, Character(explodedTuple[2]), Int(explodedTuple[3])!, Character(explodedTuple[4]), Character(explodedTuple[5])));
         }

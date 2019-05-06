@@ -156,6 +156,10 @@ class Executioner {
         //note: memory[line + 1] = nextLine, memory[line + 2] = nextNextLine
         //I didn't make variables with those names so it doesn't cause crashes when
         //trying to access things outside memory if no arguments are needed for the instruction
+        if (instruction(rawValue: accessMemory(line)) == nil) {
+            print("ERROR Unknown instruction \"\(accessMemory(line))\" at line \(line)")
+            return true
+        }
         switch instruction(rawValue: accessMemory(line))! {
         case instruction.clrr:
             //clrr

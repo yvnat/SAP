@@ -245,8 +245,8 @@ jmpne do01
 wh01: halt
 .End
 """
-var user = "andewstadnicki"
-var program = "Doubles"
+var user = "romaphile"
+var program = "Turing"
 a.assemble(path: "/Users/\(user)/Desktop/\(program)")
 readFromFile(path: "/Users/\(user)/Desktop/\(program).bin", specificClass: "executioner")
 //Andrew's computer: /Users/andrewstadnicki/Desktop/Doubles.txt

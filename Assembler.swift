@@ -313,7 +313,7 @@ class Assembler {
             //if errors, write them to file
             if (binaryCode == []) {
                 print("Assembly incomplete. See listing file for errors.")
-                try errors.write(toFile: "\(path).ls", atomically: false, encoding: .utf8)
+                try errors.write(toFile: "\(path)-errors.txt", atomically: false, encoding: .utf8)
                 return;
             }
             //if no errors, write program to file

@@ -85,9 +85,11 @@ class Executioner {
     //WE NEED TO FIGURE OUT WHAT readln (51) DOES AND IF THE readLine()! IS NECESSARY
     func readString(_ memoryLocation: Int, _ register: Int) {
         let input = readLine()!
-        writeRegister(register, input.count)
+        //SWIFT 4: writeRegister(register, input.count)
+        writeRegister(register, input.characters.count)
         var i = 0
-        for char in input {
+        //SWIFT 4: for char in input {
+        for char in input.characters {
             writeMemory(memoryLocation + i, characterToUnicodeValue(char))
             i += 1;
         }
@@ -159,7 +161,7 @@ class Executioner {
             print("ERROR Unknown instruction \"\(accessMemory(line))\" at line \(line)")
             return true
         }
-//        print("execusting line \(line), which contains the instruction \(accessMemory(line))/\(instruction(rawValue: accessMemory(line))!)")
+        //        print("execusting line \(line), which contains the instruction \(accessMemory(line))/\(instruction(rawValue: accessMemory(line))!)")
         switch instruction(rawValue: accessMemory(line))! {
         case instruction.clrr:
             //clrr

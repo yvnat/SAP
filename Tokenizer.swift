@@ -78,7 +78,8 @@ class Tokenizer {
     //takes a string and outputs [character]
     func stringToCharacters(_ line: String) -> [Character] {
         var characters: [Character] = []
-        let strings: [String] = line.map{ String($0) };
+        //SWIFT 4: let strings: [String] = line.map{ String($0) }
+        let strings: [String] = line.unicodeScalars.map{ String($0) }
         for i in 0..<strings.count{
             characters.append(Character(strings[i]))
         }
@@ -180,13 +181,15 @@ class Tokenizer {
             return nil;
         }
         var isValidTuple = true;    //checks if the potential tuple...
-        isValidTuple = isValidTuple && (explodedTuple[0] == "/");   //starts with /
-        isValidTuple = isValidTuple && (Int(explodedTuple[1]) != nil);  //is a valid int
-        isValidTuple = isValidTuple && (explodedTuple[2].count == 1);   //is a valid character
-        isValidTuple = isValidTuple && (Int(explodedTuple[3]) != nil);
-        isValidTuple = isValidTuple && (explodedTuple[4].count == 1);
-        isValidTuple = isValidTuple && (explodedTuple[5] == "r" || explodedTuple[5] == "l");    //is either r or l
-        isValidTuple = isValidTuple && (explodedTuple[6] == "/"); //ends with /
+        isValidTuple = isValidTuple && (explodedTuple[0] == "/")   //starts with /
+        isValidTuple = isValidTuple && (Int(explodedTuple[1]) != nil)  //is a valid int
+        //SWIFT 4: isValidTuple = isValidTuple && (explodedTuple[2].count == 1)
+        isValidTuple = isValidTuple && (explodedTuple[2].characters.count == 1)   //is a valid character
+        isValidTuple = isValidTuple && (Int(explodedTuple[3]) != nil)
+        //SWIFT 4: isValidTuple = isValidTuple && (explodedTuple[4].count == 1)
+        isValidTuple = isValidTuple && (explodedTuple[4].characters.count == 1)
+        isValidTuple = isValidTuple && (explodedTuple[5] == "r" || explodedTuple[5] == "l")    //is either r or l
+        isValidTuple = isValidTuple && (explodedTuple[6] == "/") //ends with /
         if (isValidTuple) {
             return Token(type: .ImmediateTuple, intValue: nil, stringValue: nil, tupleValue: Tuple(Int(explodedTuple[1])!, Character(explodedTuple[2]), Int(explodedTuple[3])!, Character(explodedTuple[4]), Character(explodedTuple[5])));
         }
@@ -194,7 +197,8 @@ class Tokenizer {
     }
     func chunkToLabel(_ c: Chunk)->Token? {
         //a label cannot start with something that's not a letter
-        if (!CharacterSet.letters.contains(Unicode.Scalar(characterToUnicodeValue(c.chars[0]))!)) {
+        //SWIFT 4: if (!CharacterSet.letters.contains(Unicode.Scalar(characterToUnicodeValue(c.chars[0]))!)) {
+        if (!CharacterSet.letters.contains(UnicodeScalar(characterToUnicodeValue(c.chars[0]))!)) {
             return nil;
         }
         //a label cannot be a register or a label definition or an instruction
@@ -205,7 +209,8 @@ class Tokenizer {
     }
     func chunkToLabelDefinition(_ c: Chunk)->Token? {
         //a label cannot start with something that's not a letter
-        if (!CharacterSet.letters.contains(Unicode.Scalar(characterToUnicodeValue(c.chars[0]))!)) {
+        //SWIFT 4: if (!CharacterSet.letters.contains(Unicode.Scalar(characterToUnicodeValue(c.chars[0]))!)) {
+        if (!CharacterSet.letters.contains(UnicodeScalar(characterToUnicodeValue(c.chars[0]))!)) {
             return nil;
         }
         //a label cannot be a register or an instruction

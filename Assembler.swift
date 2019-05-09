@@ -74,7 +74,7 @@ class Assembler {
         ".allocate":[.ImmediateInteger],
         ".string":[.ImmediateString],
         ".tuple":[.ImmediateTuple],
-    ]
+        ]
     var symbolsTable: [String:Int] = [:];
     var program: [Token] = [];
     var errors = "";
@@ -97,14 +97,16 @@ class Assembler {
         return "" //TODO: make this crash
     }
     func addStringToMemory(_ token: Token) {
-        program.append(Token(type: TokenType.Data, intValue: token.stringValue!.count, stringValue: nil, tupleValue: nil));
-        for i in token.stringValue! {
-            program.append(Token(type: TokenType.Data, intValue: characterToUnicodeValue(i), stringValue: nil, tupleValue: nil));
+        //SWIFT 4: program.append(Token(type: TokenType.Data, intValue: token.stringValue!.count, stringValue: nil, tupleValue: nil))
+        program.append(Token(type: TokenType.Data, intValue: token.stringValue!.characters.count, stringValue: nil, tupleValue: nil))
+        //SWIFT 4: for i in token.stringValue! {
+        for i in token.stringValue!.characters {
+            program.append(Token(type: TokenType.Data, intValue: characterToUnicodeValue(i), stringValue: nil, tupleValue: nil))
         }
     }
     //takes r or l, returns 1 or 0
     func convertDirToBool(_ c: Character)->Int {
-        return (c == "r") ? 1 : 0;
+        return (c == "r") ? 1 : 0
     }
     //;state|input|next state|write|dir
     func addTupleToMemory(_ token: Token) {
@@ -287,16 +289,16 @@ class Assembler {
         assembledProgram.insert(symbolsTable[startLocation!]!, at: 1);
         return assembledProgram;
         //Write to file as binary code
-//        var contents = ""
-//        for i in 0..<tokens.tokens.count {
-//            do {
-//                contents = String(describing: tokens.tokens[i])
-//                try contents.write(toFile: path, atomically: false, encoding: .utf8)
-//            }
-//            catch let error as NSError {
-//                print("Unable to save to file: \(error)")
-//            }
-//        }
+        //        var contents = ""
+        //        for i in 0..<tokens.tokens.count {
+        //            do {
+        //                contents = String(describing: tokens.tokens[i])
+        //                try contents.write(toFile: path, atomically: false, encoding: .utf8)
+        //            }
+        //            catch let error as NSError {
+        //                print("Unable to save to file: \(error)")
+        //            }
+        //        }
     }
     func symbolsTableToString()->String {
         var s = ""

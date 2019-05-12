@@ -218,7 +218,8 @@ func readFromFile(path: String?, specificClass: String){
 var a = Assembler();
 var user = "romaphile"
 var program = "Turing"
-a.assemble(path: "/Users/\(user)/Desktop/\(program)")
-readFromFile(path: "/Users/\(user)/Desktop/\(program).bin.txt", specificClass: "executioner")
+if a.assemble(path: "/Users/\(user)/Desktop/\(program)"){
+    readFromFile(path: "/Users/\(user)/Desktop/\(program).bin.txt", specificClass: "executioner")
+}
 //Andrew's computer: /Users/andrewstadnicki/Desktop/Doubles.txt
 //Computer at school: /Users/STUDENT ID NUMBER HERE/Desktop/Doubles.txt

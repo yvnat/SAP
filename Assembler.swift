@@ -308,7 +308,7 @@ class Assembler {
         return s;
     }
     //take a path to the code, output the files
-    func assemble(path: String) {
+    func assemble(path: String)->Bool {
         do {
             let stringProgram = try String(contentsOfFile: "\(path).txt", encoding: String.Encoding.utf8);
             let binaryCode = convertToBinary(stringProgram);
@@ -316,7 +316,7 @@ class Assembler {
             if (binaryCode == []) {
                 print("Assembly incomplete. See listing file for errors.")
                 try errors.write(toFile: "\(path)-errors.txt", atomically: false, encoding: .utf8)
-                return;
+                return false;
             }
             //if no errors, write program to file
             var assembledProgram = "";
@@ -326,9 +326,12 @@ class Assembler {
             try assembledProgram.write(toFile: "\(path).bin.txt", atomically: false, encoding: .utf8)
             try symbolsTableToString().write(toFile: "\(path).ls.txt", atomically: false, encoding: .utf8)
             print("Assembly successful.")
+            return true;
         }
         catch {
             print("Contents Failed To Load");
         }
+        print("An unexpected error has occured and assembly aborted")
+        return false;
     }
 }

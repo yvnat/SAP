@@ -156,10 +156,10 @@ class Executioner {
     var lastCurrentLine = 0
     //this executes one specific line
     //returns true on halt, false otherwise
-    func executeLine(_ line: Int)->Bool {
+    func executeLine(_ line: Int)->Int {
         //return false if halt
         if (accessMemory(line) == 0) {
-            return true
+            return -1
         }
         //execute the line
         //note: memory[line + 1] = nextLine, memory[line + 2] = nextNextLine
@@ -167,7 +167,7 @@ class Executioner {
         //trying to access things outside memory if no arguments are needed for the instruction
         if (instruction(rawValue: accessMemory(line)) == nil) {
             print("ERROR Unknown instruction \"\(accessMemory(line))\" at line \(line)")
-            return true
+            return -1
         }
         if (verbose) {
             print("                                executing pos \(line): \(accessMemory(line))/\(instruction(rawValue: accessMemory(line))!)")
@@ -515,7 +515,7 @@ class Executioner {
             break
         case instruction.brk:
             //brk
-            break
+            return 1;
         case instruction.movrx:
             //movrx
             writeMemory(accessRegister(accessMemory(line + 2)), accessRegister(accessMemory(line + 1)))
@@ -547,7 +547,7 @@ class Executioner {
             break;
         default:
             print("ERROR Unknown instruction \"\(memory[line])\" at line \(line)")
-            return true
+            return -1
         }
         if (error != 0) {
             var denilledInstruction: String {
@@ -556,9 +556,9 @@ class Executioner {
             }
             print("ERROR #\(error) \(errorMessages[error])\(errorDetails) at pos. \(line) (instruction \(accessMemory(line))/\(denilledInstruction)");
             error = 0;
-            return true;
+            return -1;
         }
-        return false;
+        return 0;
     }
     
     //this executes whatever is currently in memory
@@ -570,7 +570,7 @@ class Executioner {
             //execute the current line and note if it is a halt
             let halt = executeLine(currentLine);
             //halt if the current instruction is halt
-            if (halt) {
+            if (halt == -1) {
                 break
             }
             //and of course increment the current line

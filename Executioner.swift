@@ -3,6 +3,8 @@
 //no relation to capital punishment
 //crash conditions: out of memory, illegal instruction, div by 0, illegal register, stack overflow
 class Executioner {
+    //set to true to have it print every instruction as it executes it
+    var verbose = false;
     //the registers
     var registers: [Int] = Array(repeating: 0, count: 10)
     var compare = 0;  //positive if bigger, negative if smaller, 0 if equal
@@ -58,12 +60,14 @@ class Executioner {
     func accessRegister(_ register: Int)->Int {
         if (register < 0 || register > 9) {
             error = 3;
+            errorDetails = " \(register)"
             return 0;
         }
         return registers[register]
     }
     func writeRegister(_ register: Int, _ what: Int) {
         if (register < 0 || register > 9) {
+            errorDetails = " \(register)"
             error = 3;
             return;
         }
@@ -165,7 +169,9 @@ class Executioner {
             print("ERROR Unknown instruction \"\(accessMemory(line))\" at line \(line)")
             return true
         }
-        //        print("execusting line \(line), which contains the instruction \(accessMemory(line))/\(instruction(rawValue: accessMemory(line))!)")
+        if (verbose) {
+            print("                                executing pos \(line): \(accessMemory(line))/\(instruction(rawValue: accessMemory(line))!)")
+        }
         switch instruction(rawValue: accessMemory(line))! {
         case instruction.clrr:
             //clrr
@@ -463,7 +469,7 @@ class Executioner {
             break
         case instruction.outci:
             //outci
-            print(accessMemory(line + 1))
+            print(unicodeValueToCharacter(accessMemory(line + 1)), terminator: "")
             currentLine += 1
             break
         case instruction.outcr:
@@ -537,14 +543,18 @@ class Executioner {
                 // print("currentLine - \(currentLine)")
                 break;
             }
-            currentLine += 2;
+            currentLine += 1;
             break;
         default:
             print("ERROR Unknown instruction \"\(memory[line])\" at line \(line)")
             return true
         }
         if (error != 0) {
-            print("ERROR #\(error) \(errorMessages[error])\(errorDetails) at line \(line) (instruction \(accessMemory(line)))");
+            var denilledInstruction: String {
+                let inst = instruction(rawValue: accessMemory(line))
+                return inst == nil ? "nil" : "\(inst!)"
+            }
+            print("ERROR #\(error) \(errorMessages[error])\(errorDetails) at pos. \(line) (instruction \(accessMemory(line))/\(denilledInstruction)");
             error = 0;
             return true;
         }
@@ -553,6 +563,9 @@ class Executioner {
     
     //this executes whatever is currently in memory
     func execute() {
+//        for i in 251...276 {
+//            print(accessMemory(i))
+//        }
         while true {
             //execute the current line and note if it is a halt
             let halt = executeLine(currentLine);

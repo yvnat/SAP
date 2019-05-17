@@ -1,11 +1,11 @@
 import Foundation
 
 class Debugger {
-    var assembler = Assembler();
-    var executioner = Executioner();
-    var path = "";
-    var breakpoints = Set<Int>();
-    var areBreakpointsDisabled = false;
+    var assembler = Assembler()
+    var executioner = Executioner()
+    var path = ""
+    var breakpoints = Set<Int>()
+    var areBreakpointsDisabled = false
     var symbolTable: [String: Int] = [:]
     
     func isCurrentlyAtBreakpoint(_ point: Int)->Bool {
@@ -19,37 +19,37 @@ class Debugger {
     }
     func addBreakpoint(_ point: Int) {
         if point < 0 || point >= executioner.memory.count {
-            print("Error: memory location \(point) out of bounds");
-            return;
+            print("Error: memory location \(point) out of bounds")
+            return
         }
-        breakpoints.insert(point);
+        breakpoints.insert(point)
     }
     func removeBreakpoint(_ point: Int) {
         if !breakpoints.contains(point) {
             print("Error: no breakpoint at \(point)");
-            return;
+            return
         }
-        breakpoints.remove(point);
+        breakpoints.remove(point)
     }
     func clearBreakpoints() {
-        breakpoints = Set<Int>();
+        breakpoints = Set<Int>()
     }
     func disableAllBreakpoints() {
-        areBreakpointsDisabled = true;
+        areBreakpointsDisabled = true
     }
     func enableAllBreakpoints() {
-        areBreakpointsDisabled = false;
+        areBreakpointsDisabled = false
     }
     func printBreakpoints() {
         print("Breakpoint locations:")
         for i in breakpoints {
-            print(i);
+            print(i)
         }
     }
     func printRegisters() {
         print("Registers:")
         for i in 0..<executioner.registers.count {
-            print("r\(i): \(executioner.registers[i])");
+            print("r\(i): \(executioner.registers[i])")
         }
     }
     func writeToRegister(_ register: Int, _ value: Int) {
@@ -61,31 +61,46 @@ class Debugger {
     }
     func changeProgramCounter(_ value: Int) {
         if value < 0 || value >= executioner.memory.count {
-            print("Error: memory location \(value) out of bounds");
+            print("Error: memory location \(value) out of bounds")
         }
-        executioner.currentLine = value;
+        executioner.currentLine = value
     }
     func printMemory(_ value1: Int, _ value2: Int) {
         if value1 >= value2 {
             print("Error: \(value1) must be smaller than \(value2)")
         }
         if value1 < 0 || value2 >= executioner.memory.count {
-            print("Error: memory location out of bounds");
+            print("Error: memory location out of bounds")
         }
         for i in value1...value2 {
             print(executioner.memory[i])
         }
     }
+    //DEASSEMBLE MEMORY LOCATIONS
+    func deassemble(_ value1: Int, _ value2: Int){
+        
+    }
     func changeMemory(_ location: Int, _ value: Int) {
         if location < 0 || location >= executioner.memory.count {
-            print("Error: memory location \(location) out of bounds");
+            print("Error: memory location \(location) out of bounds")
         }
-        executioner.memory[location] = value;
+        executioner.memory[location] = value
     }
     func printSymbolTable() {
         for i in symbolTable {
-            print("\(i.key) : \(i.value)");
+            print("\(i.key) : \(i.value)")
         }
+    }
+    func continueProgram(){
+        for i in 0..<executioner.memory.count {
+            singleStep()
+        }
+    }
+    func singleStep(){
+        
+    }
+    func exit(){
+        exit()
     }
     func help() {
         print("""

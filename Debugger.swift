@@ -91,18 +91,8 @@ class Debugger {
             print("\(i.key) : \(i.value)")
         }
     }
-    func continueProgram(){
-        for i in 0..<executioner.memory.count {
-            singleStep()
-        }
-    }
-    func singleStep(){
-        
-    }
-    func exit(){
-        exit()
-    }
     func help() {
+        /*
         print("""
                                     Commands:
                                    -----------
@@ -124,34 +114,73 @@ class Debugger {
         exit                                terminate virtual machine
         help                                print this help table
         """)
+ */
     }
     func run() {
         while true {
             print("Sdb (\(executioner.currentLine),\(executioner.accessMemory(executioner.currentLine)))>", terminator: " ")
-            var input = readLine();
+            let input = readLine();
             if input == nil {
                 continue;
             }
             if (input! == "exit") {
                 return
             }
-            var splitInput = splitStringIntoParts(expression: input!);
+            var splitInput = splitStringIntoParts(expression: input!)
             if splitInput.count < 1 {
                 print("what. this should not happen.")
                 continue;
             }
             switch splitInput[0] {
             case "setbk":
-                if splitInput.count != 2 {print("Incorrect number of arguments for command. Type \"help\" for a list of commands.");continue;}
-                if Int(splitInput[1]) == nil {print("\(splitInput[1]) must be a valid int");continue;}
+                if splitInput.count != 2 {print("Incorrect number of arguments for command. Type \"help\" for a list of commands.");continue}
+                if Int(splitInput[1]) == nil {print("\(splitInput[1]) must be a valid int");continue}
                 addBreakpoint(Int(splitInput[1])!)
             case "rembk":
-                if splitInput.count != 2 {print("Incorrect number of arguments for command. Type \"help\" for a list of commands.");continue;}
-                if Int(splitInput[1]) == nil {print("\(splitInput[1]) must be a valid int");continue;}
+                if splitInput.count != 2 {print("Incorrect number of arguments for command. Type \"help\" for a list of commands.");continue}
+                if Int(splitInput[1]) == nil {print("\(splitInput[1]) must be a valid int");continue}
                 removeBreakpoint(Int(splitInput[1])!)
+            case "clrbk":
+                clearBreakpoints()
+            case "disbk":
+                disableAllBreakpoints()
+            case "enbk":
+                enableAllBreakpoints()
             case "pbk":
-                if splitInput.count != 1 {print("Incorrect number of arguments for command. Type \"help\" for a list of commands.");continue;}
-                printBreakpoints();
+                if splitInput.count != 1 {print("Incorrect number of arguments for command. Type \"help\" for a list of commands.");continue}
+                printBreakpoints()
+            case "preg":
+                printRegisters()
+            case "wreg":
+                if splitInput.count != 3 {print("Incorrect number of arguments for command. Type \"help\" for a list of commands.");continue}
+                if Int(splitInput[1]) == nil {print("\(splitInput[1]) must be a valid int");continue}
+                if Int(splitInput[2]) == nil {print("\(splitInput[2]) must be a valid int");continue}
+                writeToRegister(Int(splitInput[1])!, Int(splitInput[2])!)
+            case "wpc":
+                if splitInput.count != 2 {print("Incorrect number of arguments for command. Type \"help\" for a list of commands.");continue}
+                if Int(splitInput[1]) == nil {print("\(splitInput[1]) must be a valid int");continue}
+                changeProgramCounter(Int(splitInput[1])!)
+            case "pmem":
+                if splitInput.count != 3 {print("Incorrect number of arguments for command. Type \"help\" for a list of commands.");continue}
+                if Int(splitInput[1]) == nil {print("\(splitInput[1]) must be a valid int");continue}
+                if Int(splitInput[2]) == nil {print("\(splitInput[2]) must be a valid int");continue}
+                printMemory(Int(splitInput[1])!, Int(splitInput[2])!)
+            case "deas":
+                if splitInput.count != 3 {print("Incorrect number of arguments for command. Type \"help\" for a list of commands.");continue}
+                if Int(splitInput[1]) == nil {print("\(splitInput[1]) must be a valid int");continue}
+                if Int(splitInput[2]) == nil {print("\(splitInput[2]) must be a valid int");continue}
+                deassemble(Int(splitInput[1])!, Int(splitInput[2])!)
+            case "wmem":
+                if splitInput.count != 3 {print("Incorrect number of arguments for command. Type \"help\" for a list of commands.");continue}
+                if Int(splitInput[1]) == nil {print("\(splitInput[1]) must be a valid int");continue}
+                if Int(splitInput[2]) == nil {print("\(splitInput[2]) must be a valid int");continue}
+                changeMemory(Int(splitInput[1])!, Int(splitInput[2])!)
+            case "pst":
+                printSymbolTable()
+            case "g":
+            case "s":
+            case "help":
+                help()
             default:
                 print("Unknown command \"\(splitInput[0])\". Type \"help\" for a list of commands")
             }

@@ -82,9 +82,21 @@ class Debugger {
             print(executioner.memory[i])
         }
     }
-    //DEASSEMBLE MEMORY LOCATIONS
-    func deassemble(_ value1: Int, _ value2: Int){
-        
+    func deassemble(_ value1: Int, _ value2: Int) {
+        if (value1 >= value2) {
+            print("First location must be smaller than second value")
+            return;
+        }
+        if (value1 < 0 || value2 >= executioner.memory.count) {
+            print("Memory locations out of bound")
+            return;
+        }
+        var memorySubset: [Int] = [];
+        for i in value1..<value2 {
+            memorySubset.append(executioner.memory[i])
+        }
+        var d = Disassembler(symbolTable: symbolTable, memory: memorySubset)
+        d.convertBinaryToAssembly();
     }
     func changeMemory(_ location: Int, _ value: Int) {
         if location < 0 || location >= executioner.memory.count {

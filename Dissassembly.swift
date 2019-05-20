@@ -9,7 +9,6 @@ class Disassembler {
     var memory: [Int]
     //Resulting Assembly Code
     var resultLines: [String] = []
-    var parameters: [TokenType] {return Instructions[instruction(rawValue: currentLocation)]}
     init(symbolTable: [String:Int], memory: [Int]) {
         self.memory = memory
         self.symbolTable = symbolTable
@@ -17,7 +16,7 @@ class Disassembler {
     func givenParameter(_ parameter: TokenType, _ value: Int) -> Bool {
         switch parameter {
         case .Register:
-            return value > 0 && value < 10
+            return value >= 0 && value < 10
         case .Label:
             for i in symbolTable {
                 if i.value == value {
@@ -32,31 +31,83 @@ class Disassembler {
             return false
         }
     }
-    func matchParameters()->Bool {
-        //var parameters: [TokenType] = Instructions[instruction(rawValue: location)]
+    //this takes in the value of the instruction (ie 0 for halt) and returns whether the things after it work as arguments
+    func matchParameters(instructionValue: Int)->Bool {
+        var opt_instruction = instruction(rawValue: instructionValue)
+        //if not valid instruction, return false
+        if opt_instruction == nil {
+            print("Disassembly error: no instruction #\(instructionValue)")
+            return false;
+        }
+        var parameters: [TokenType] = Instructions[opt_instruction!]!
         for i in 0..<parameters.count {
-            //if parameters make sense
+            //if ran out of memory, return false
+            if currentLocation + i + 1 >= memory.count {
+                print("Disassmebly error: memory bounds end within expected parameters")
+                return false;
+            }
+            //if parameters dont make sense, return false
             if givenParameter(parameters[i], memory[currentLocation + i + 1]) == false {
+                print("Disassembly error: parameters invalid at \(currentLocation) for instruction \(opt_instruction!) (expected \(parameters[i]), got \(memory[currentLocation + i + 1])))")
                 return false
             }
         }
         return true
     }
-    func lineToAssembly() {
-        if matchParameters() == true {
+    func valueToString(value: Int, type: TokenType)->String {
+        switch type {
+        case .Register:
+            return "r\(value)"
+        case .Label:
+            for i in symbolTable {
+                if i.value == value {
+                    return i.key
+                }
+            }
+            print("UNEXPECTED ERROR CANNOT FIND LABEL")
+        case .ImmediateInteger:
+            return "#\(value)"
+        default:
+            return "UNEXPECTED ERROR"
+        }
+        return "UNEXPECTED ERROR2"
+    }
+    //converts the next line to assembly.
+    //returns true on success, false on failure
+    func lineToAssembly()->Bool {
+        if (currentLocation >= memory.count) {
+            print("Disassembly error: location out of bounds")
+            return false;
+        }
+        if matchParameters(instructionValue: memory[currentLocation]) == true {
+            var parameters = Instructions[instruction(rawValue: currentLocation)!]!;
             var d = ""
-            d = "\(Instructions[currentLocation])"
-            for i in 1..<(parameters.count + 1) {
+            d = "\(instruction(rawValue: currentLocation)!)"  //it is fine to unwrap because matchParameters already checks for valid instruction
+            currentLocation += 1
+            for i in 0..<(parameters.count) {
                 //add parameters
-                d += " \(Instructions[instruction(rawValue: currentLocation)])"
+                d += " " + valueToString(value: memory[currentLocation], type: parameters[i]);
+                currentLocation += 1
             }
             resultLines.append(d)
-            currentLocation += 1 + parameters.count
+            return true;
+        } else {
+            return false;
         }
     }
     func convertBinaryToAssembly() {
-        while currentLocation < memory.count - 2 {
-            lineToAssembly()
+        currentLocation = 0;
+        resultLines = [];
+        while currentLocation < memory.count {
+            if lineToAssembly() == false {
+                for i in resultLines {
+                    print("    " + i)
+                }
+                return;
+            }
+        }
+        for i in resultLines {
+            print(i)
         }
     }
 }

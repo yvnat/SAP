@@ -7,7 +7,7 @@ func splitStringIntoLines(expression: String)->[String]{
     return expression.characters.split{$0 == "\r" || $0 == "\n"}.map{ String($0) }
 }
 class Assembler {
-    var static instructionParameters: [instruction : [TokenType]] = [
+    static var instructionParameters: [instruction : [TokenType]] = [
         .halt:[],
         .clrr:[.Register],
         .clrx:[.Register],
@@ -150,7 +150,7 @@ class Assembler {
             //assume everything else is parameters and check if they are correct accordingly
             var i = 0;
             let instructionType = line[index].intValue!
-            var parameters = instructionParameters[instruction(rawValue: instructionType)!]!
+            var parameters = Assembler.instructionParameters[instruction(rawValue: instructionType)!]!
             //add the instruction to the program, then move to parameters
             program.append(line[index])
             index += 1;

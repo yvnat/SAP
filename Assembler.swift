@@ -7,7 +7,7 @@ func splitStringIntoLines(expression: String)->[String]{
     return expression.characters.split{$0 == "\r" || $0 == "\n"}.map{ String($0) }
 }
 class Assembler {
-    var instructionParameters: [instruction : [TokenType]] = [
+    var static instructionParameters: [instruction : [TokenType]] = [
         .halt:[],
         .clrr:[.Register],
         .clrx:[.Register],

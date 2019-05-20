@@ -132,6 +132,8 @@ class Debugger {
         s                                   single step
         exit                                terminate virtual machine
         help                                print this help table
+
+            *Any address can be given either as a label or an integer*
         """)
     }
     func run() {
@@ -163,13 +165,29 @@ class Debugger {
             }
             switch splitInput[0] {
             case "setbk":
+                var address1: Int;
                 if splitInput.count != 2 {print("Incorrect number of arguments for command. Type \"help\" for a list of commands.");continue}
-                if Int(splitInput[1]) == nil {print("\(splitInput[1]) must be a valid int");continue}
-                addBreakpoint(Int(splitInput[1])!)
-            case "rembk":
+                if Int(splitInput[1]) != nil {
+                    address1 = Int(splitInput[1])!
+                } else if symbolTable[splitInput[1]] != nil {
+                    address1 = symbolTable[splitInput[1]]!
+                } else {
+                    print("\(splitInput[1]) must be a valid memory address or label");
+                    continue;
+                }
+                addBreakpoint(address1)
+            case "rmbk":
+                var address1: Int;
                 if splitInput.count != 2 {print("Incorrect number of arguments for command. Type \"help\" for a list of commands.");continue}
-                if Int(splitInput[1]) == nil {print("\(splitInput[1]) must be a valid int");continue}
-                removeBreakpoint(Int(splitInput[1])!)
+                if Int(splitInput[1]) != nil {
+                    address1 = Int(splitInput[1])!
+                } else if symbolTable[splitInput[1]] != nil {
+                    address1 = symbolTable[splitInput[1]]!
+                } else {
+                    print("\(splitInput[1]) must be a valid memory address or label");
+                    continue;
+                }
+                removeBreakpoint(address1)
             case "clrbk":
                 if splitInput.count != 1 {print("Incorrect number of arguments for command. Type \"help\" for a list of commands.");continue}
                 clearBreakpoints()
@@ -195,20 +213,58 @@ class Debugger {
                 if Int(splitInput[1]) == nil {print("\(splitInput[1]) must be a valid int");continue}
                 changeProgramCounter(Int(splitInput[1])!)
             case "pmem":
+                var address1: Int, address2: Int
                 if splitInput.count != 3 {print("Incorrect number of arguments for command. Type \"help\" for a list of commands.");continue}
-                if symbolTable[splitInput[1]] == nil {print("\(splitInput[1]) must be a valid address");continue}
-                if symbolTable[splitInput[2]] == nil {print("\(splitInput[2]) must be a valid address");continue}
-                printMemory(symbolTable[splitInput[1]]!, symbolTable[splitInput[2]]!)
+                if Int(splitInput[1]) != nil {
+                    address1 = Int(splitInput[1])!
+                } else if symbolTable[splitInput[1]] != nil {
+                    address1 = symbolTable[splitInput[1]]!
+                } else {
+                    print("\(splitInput[1]) must be a valid memory address or label");
+                    continue;
+                }
+                if Int(splitInput[2]) != nil {
+                    address2 = Int(splitInput[2])!
+                } else if symbolTable[splitInput[2]] != nil {
+                    address2 = symbolTable[splitInput[2]]!
+                } else {
+                    print("\(splitInput[2]) must be a valid memory address or label");
+                    continue;
+                }
+                printMemory(address1, address2)
             case "deas":
+                var address1: Int, address2: Int
                 if splitInput.count != 3 {print("Incorrect number of arguments for command. Type \"help\" for a list of commands.");continue}
-                if symbolTable[splitInput[1]] == nil {print("\(splitInput[1]) must be a valid address");continue}
-                if symbolTable[splitInput[2]] == nil {print("\(splitInput[2]) must be a valid address");continue}
-                deassemble(symbolTable[splitInput[1]]!, symbolTable[splitInput[2]]!)
+                if Int(splitInput[1]) != nil {
+                    address1 = Int(splitInput[1])!
+                } else if symbolTable[splitInput[1]] != nil {
+                    address1 = symbolTable[splitInput[1]]!
+                } else {
+                    print("\(splitInput[1]) must be a valid memory address or label");
+                    continue;
+                }
+                if Int(splitInput[2]) != nil {
+                    address2 = Int(splitInput[2])!
+                } else if symbolTable[splitInput[2]] != nil {
+                    address2 = symbolTable[splitInput[2]]!
+                } else {
+                    print("\(splitInput[2]) must be a valid memory address or label");
+                    continue;
+                }
+                deassemble(address1, address2)
             case "wmem":
+                var address1: Int;
                 if splitInput.count != 3 {print("Incorrect number of arguments for command. Type \"help\" for a list of commands.");continue}
-                if symbolTable[splitInput[1]] == nil {print("\(splitInput[1]) must be a valid address");continue}
+                if Int(splitInput[1]) != nil {
+                    address1 = Int(splitInput[1])!
+                } else if symbolTable[splitInput[1]] != nil {
+                    address1 = symbolTable[splitInput[1]]!
+                } else {
+                    print("\(splitInput[1]) must be a valid memory address or label");
+                    continue;
+                }
                 if Int(splitInput[2]) == nil {print("\(splitInput[2]) must be a valid int");continue}
-                changeMemory(Int(splitInput[1])!, Int(splitInput[2])!)
+                changeMemory(address1, Int(splitInput[2])!)
             case "pst":
                 if splitInput.count != 1 {print("Incorrect number of arguments for command. Type \"help\" for a list of commands.");continue}
                 printSymbolTable()

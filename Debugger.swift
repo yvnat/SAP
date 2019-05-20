@@ -1,21 +1,27 @@
 import Foundation
 
 class Debugger {
-    var assembler = Assembler()
-    var executioner = Executioner()
-    var path = ""
-    var breakpoints = Set<Int>()
-    var areBreakpointsDisabled = false
-    var symbolTable: [String: Int] = [:]
+    var executioner: Executioner;
+    var breakpoints: Set<Int>;
+    var areBreakpointsDisabled: Bool;
+    var symbolTable: [String: Int];
+    var executing: Bool;
+    var done: Bool;
+    
+    init() {
+        breakpoints = Set<Int>()
+        areBreakpointsDisabled = false
+        symbolTable = [:]
+        executing = false;
+        done = false;
+        executioner = Executioner()
+    }
     
     func isCurrentlyAtBreakpoint(_ point: Int)->Bool {
         if areBreakpointsDisabled {
             return false;
         }
         return breakpoints.contains(point);
-    }
-    func setPath(_ newpath: String) {
-        path = newpath;
     }
     func addBreakpoint(_ point: Int) {
         if point < 0 || point >= executioner.memory.count {
@@ -92,11 +98,10 @@ class Debugger {
         }
     }
     func help() {
-        /*
         print("""
                                     Commands:
                                    -----------
-        setbk<address>                      set breakpoint at <address>
+        setbk <address>                     set breakpoint at <address>
         rmbk <address>                      remove breakpoint at <address>
         clrbk                               clear all breakpoints
         disbk                               temporarily disable all breakpoints
@@ -114,10 +119,23 @@ class Debugger {
         exit                                terminate virtual machine
         help                                print this help table
         """)
- */
+
     }
     func run() {
         while true {
+            while executing {
+                let executionState = executioner.executeLine(executioner.currentLine);
+                if isCurrentlyAtBreakpoint(executioner.currentLine) {
+                    executing = false;
+                }
+                if executionState == 1 {
+                    executing = false;
+                } else if executionState == -1 {
+                    executing = false;
+                    done = true;
+                    print("\nProgram finished.")
+                }
+            }
             print("Sdb (\(executioner.currentLine),\(executioner.accessMemory(executioner.currentLine)))>", terminator: " ")
             let input = readLine();
             if input == nil {
@@ -128,7 +146,6 @@ class Debugger {
             }
             var splitInput = splitStringIntoParts(expression: input!)
             if splitInput.count < 1 {
-                print("what. this should not happen.")
                 continue;
             }
             switch splitInput[0] {
@@ -141,15 +158,19 @@ class Debugger {
                 if Int(splitInput[1]) == nil {print("\(splitInput[1]) must be a valid int");continue}
                 removeBreakpoint(Int(splitInput[1])!)
             case "clrbk":
+                if splitInput.count != 1 {print("Incorrect number of arguments for command. Type \"help\" for a list of commands.");continue}
                 clearBreakpoints()
             case "disbk":
+                if splitInput.count != 1 {print("Incorrect number of arguments for command. Type \"help\" for a list of commands.");continue}
                 disableAllBreakpoints()
             case "enbk":
+                if splitInput.count != 1 {print("Incorrect number of arguments for command. Type \"help\" for a list of commands.");continue}
                 enableAllBreakpoints()
             case "pbk":
                 if splitInput.count != 1 {print("Incorrect number of arguments for command. Type \"help\" for a list of commands.");continue}
                 printBreakpoints()
             case "preg":
+                if splitInput.count != 1 {print("Incorrect number of arguments for command. Type \"help\" for a list of commands.");continue}
                 printRegisters()
             case "wreg":
                 if splitInput.count != 3 {print("Incorrect number of arguments for command. Type \"help\" for a list of commands.");continue}
@@ -176,14 +197,68 @@ class Debugger {
                 if Int(splitInput[2]) == nil {print("\(splitInput[2]) must be a valid int");continue}
                 changeMemory(Int(splitInput[1])!, Int(splitInput[2])!)
             case "pst":
+                if splitInput.count != 1 {print("Incorrect number of arguments for command. Type \"help\" for a list of commands.");continue}
                 printSymbolTable()
             case "g":
+                if done {print("Cannot continue because the program has finished execution");continue}
+                if splitInput.count != 1 {print("Incorrect number of arguments for command. Type \"help\" for a list of commands.");continue}
+                executing = true;
+                break;
             case "s":
+                if done {print("Cannot step because the program has finished execution");continue}
+                if splitInput.count != 1 {print("Incorrect number of arguments for command. Type \"help\" for a list of commands.");continue}
+                executioner.executeLine(executioner.currentLine)
+                break;
             case "help":
                 help()
             default:
                 print("Unknown command \"\(splitInput[0])\". Type \"help\" for a list of commands")
             }
         }
+    }
+    func debug(path: String) {
+        var bad = false;
+        //load program
+        do {
+            let contents = try String(contentsOfFile: "\(path).bin", encoding: String.Encoding.utf8);
+            let lines = contents.components(separatedBy: "\n")
+            executioner.loadProgram(lines)
+        }
+        catch {
+            print("Debugger could not be initialized because binary file at \(path) could not be loaded")
+            bad = true;
+        }
+        //load symbols table
+        do {
+            let contents = try String(contentsOfFile: "\(path).sym", encoding: String.Encoding.utf8);
+            let lines = contents.components(separatedBy: "\n")
+            var symbols: [[String]] = [];
+            for i in lines {
+                symbols.append(i.components(separatedBy: ":"));
+            }
+            for i in symbols {
+                //ensure that all sections of the file are either valid or empty
+                if (i.count == 1 && i[0] == "") {
+                    continue;
+                }
+                if i.count != 2 {
+                    print("Debugger could not be initialized because the following section of the symbols file does not conform to the format of \"symbol:location\" \(i)")
+                    return;
+                }
+                if Int(i[1]) == nil {
+                    print("Debugger could not be initialized because \(i[1]) is not an int (\(i))")
+                    return;
+                }
+                symbolTable[i[0]] = Int(i[1])!;
+            }
+        }
+        catch {
+            print("Debugger could not be initialized because symbols file at \(path) could not be loaded")
+            bad = true;
+        }
+        if bad {
+            return;
+        }
+        run();
     }
 }

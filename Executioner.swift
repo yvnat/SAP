@@ -134,7 +134,7 @@ class Executioner {
             }
             memory[i] = stringToInstruction!;
         }
-        print("Successfully loaded program")
+//        print("Successfully loaded program")
     }
     
     func getStringFromLocation(_ pointer: Int) -> String {
@@ -155,7 +155,7 @@ class Executioner {
     }
     var lastCurrentLine = 0
     //this executes one specific line
-    //returns true on halt, false otherwise
+    //returns -1 on halt, 1 on break to debugger, 0 otherwise
     func executeLine(_ line: Int)->Int {
         //return false if halt
         if (accessMemory(line) == 0) {
@@ -549,6 +549,8 @@ class Executioner {
             print("ERROR Unknown instruction \"\(memory[line])\" at line \(line)")
             return -1
         }
+        //and of course increment the current line afterwards
+        currentLine += 1;
         if (error != 0) {
             var denilledInstruction: String {
                 let inst = instruction(rawValue: accessMemory(line))
@@ -573,8 +575,6 @@ class Executioner {
             if (halt == -1) {
                 break
             }
-            //and of course increment the current line
-            currentLine += 1;
         }
     }
 }

@@ -303,7 +303,7 @@ class Assembler {
     func symbolsTableToString()->String {
         var s = ""
         for i in symbolsTable {
-            s += "\(i.key): \(i.value)\n";
+            s += "\(i.key):\(i.value)\n";
         }
         return s;
     }
@@ -315,7 +315,7 @@ class Assembler {
             //if errors, write them to file
             if (binaryCode == []) {
                 print("Assembly incomplete. See listing file for errors.")
-                try errors.write(toFile: "\(path)-errors.txt", atomically: false, encoding: .utf8)
+                try errors.write(toFile: "\(path).lst", atomically: false, encoding: .utf8)
                 return false;
             }
             //if no errors, write program to file
@@ -323,13 +323,13 @@ class Assembler {
             for i in binaryCode {
                 assembledProgram += "\(i)\n";
             }
-            try assembledProgram.write(toFile: "\(path).bin.txt", atomically: false, encoding: .utf8)
-            try symbolsTableToString().write(toFile: "\(path).ls.txt", atomically: false, encoding: .utf8)
+            try assembledProgram.write(toFile: "\(path).bin", atomically: false, encoding: .utf8)
+            try symbolsTableToString().write(toFile: "\(path).sym", atomically: false, encoding: .utf8)
             print("Assembly successful.")
             return true;
         }
         catch {
-            print("Contents Failed To Load");
+            print("Contents Failed To Load (\(path))");
         }
         print("An unexpected error has occured and assembly aborted")
         return false;

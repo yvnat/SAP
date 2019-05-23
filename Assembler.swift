@@ -288,17 +288,6 @@ class Assembler {
         }
         assembledProgram.insert(symbolsTable[startLocation!]!, at: 1);
         return assembledProgram;
-        //Write to file as binary code
-        //        var contents = ""
-        //        for i in 0..<tokens.tokens.count {
-        //            do {
-        //                contents = String(describing: tokens.tokens[i])
-        //                try contents.write(toFile: path, atomically: false, encoding: .utf8)
-        //            }
-        //            catch let error as NSError {
-        //                print("Unable to save to file: \(error)")
-        //            }
-        //        }
     }
     func symbolsTableToString()->String {
         var s = ""
@@ -309,6 +298,7 @@ class Assembler {
     }
     //take a path to the code, output the files
     func assemble(path: String)->Bool {
+        errors = "";
         do {
             let stringProgram = try String(contentsOfFile: "\(path).txt", encoding: String.Encoding.utf8);
             let binaryCode = convertToBinary(stringProgram);

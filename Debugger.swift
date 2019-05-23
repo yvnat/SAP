@@ -91,12 +91,14 @@ class Debugger {
             print("Memory locations out of bound")
             return;
         }
-        var memorySubset: [Int] = [];
+        var memorySubset: [Int] = []
         for i in value1..<value2 {
             memorySubset.append(executioner.memory[i])
         }
-        var d = Disassembler(symbolTable: symbolTable, memory: memorySubset)
-        d.convertBinaryToAssembly();
+        let d = Disassembler(symbolTable: symbolTable, memory: memorySubset)
+        //DEBUGGING
+        print(symbolTable)
+        d.convertBinaryToAssembly()
     }
     func changeMemory(_ location: Int, _ value: Int) {
         if location < 0 || location >= executioner.memory.count {
@@ -110,6 +112,8 @@ class Debugger {
         }
     }
     func help() {
+        print("DEBUGGER HELP ACTIVATED")
+        /*
         print("""
                                     Commands:
                                    -----------
@@ -131,7 +135,7 @@ class Debugger {
         exit                                terminate virtual machine
         help                                print this help table
         """)
-
+*/
     }
     func run() {
         while true {
@@ -195,17 +199,17 @@ class Debugger {
                 changeProgramCounter(Int(splitInput[1])!)
             case "pmem":
                 if splitInput.count != 3 {print("Incorrect number of arguments for command. Type \"help\" for a list of commands.");continue}
-                if Int(splitInput[1]) == nil {print("\(splitInput[1]) must be a valid int");continue}
-                if Int(splitInput[2]) == nil {print("\(splitInput[2]) must be a valid int");continue}
-                printMemory(Int(splitInput[1])!, Int(splitInput[2])!)
+                if symbolTable[splitInput[1]] == nil {print("\(splitInput[1]) must be a valid address");continue}
+                if symbolTable[splitInput[2]] == nil {print("\(splitInput[2]) must be a valid address");continue}
+                printMemory(symbolTable[splitInput[1]]!, symbolTable[splitInput[2]]!)
             case "deas":
                 if splitInput.count != 3 {print("Incorrect number of arguments for command. Type \"help\" for a list of commands.");continue}
-                if Int(splitInput[1]) == nil {print("\(splitInput[1]) must be a valid int");continue}
-                if Int(splitInput[2]) == nil {print("\(splitInput[2]) must be a valid int");continue}
-                deassemble(Int(splitInput[1])!, Int(splitInput[2])!)
+                if symbolTable[splitInput[1]] == nil {print("\(splitInput[1]) must be a valid address");continue}
+                if symbolTable[splitInput[2]] == nil {print("\(splitInput[2]) must be a valid address");continue}
+                deassemble(symbolTable[splitInput[1]]!, symbolTable[splitInput[2]]!)
             case "wmem":
                 if splitInput.count != 3 {print("Incorrect number of arguments for command. Type \"help\" for a list of commands.");continue}
-                if Int(splitInput[1]) == nil {print("\(splitInput[1]) must be a valid int");continue}
+                if symbolTable[splitInput[1]] == nil {print("\(splitInput[1]) must be a valid address");continue}
                 if Int(splitInput[2]) == nil {print("\(splitInput[2]) must be a valid int");continue}
                 changeMemory(Int(splitInput[1])!, Int(splitInput[2])!)
             case "pst":

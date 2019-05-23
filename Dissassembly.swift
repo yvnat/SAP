@@ -9,9 +9,11 @@ class Disassembler {
     var memory: [Int]
     //Resulting Assembly Code
     var resultLines: [String] = []
-    init(symbolTable: [String:Int], memory: [Int]) {
+    var startLocation: Int;
+    init(symbolTable: [String:Int], memory: [Int], startLocation: Int) {
         self.memory = memory
         self.symbolTable = symbolTable
+        self.startLocation = startLocation;
     }
     func givenParameter(_ parameter: TokenType, _ value: Int) -> Bool {
         switch parameter {
@@ -59,15 +61,8 @@ class Disassembler {
         case .Register:
             return "r\(value)"
         case .Label:
-            //for i in symbolTable {
-                //if i.value == value {
-                    //return i.key
-                //}
-            //}
             for i in symbolTable.keys {
                 if symbolTable[i] == value {
-                    //DEBUGGING
-                    print("Label: \(i)")
                     return i
                 }
             }
@@ -79,6 +74,15 @@ class Disassembler {
         }
         return "UNEXPECTED ERROR2"
     }
+    //used for adding label definitions to the code, very similar to valueToString but more specialized
+    func returnLabelFromMemoryLocation(_ location: Int)->String? {
+        for i in symbolTable.keys {
+            if symbolTable[i] == location {
+                return i
+            }
+        }
+        return nil;
+    }
     //converts the next line to assembly.
     //returns true on success, false on failure
     func lineToAssembly()->Bool {
@@ -87,9 +91,15 @@ class Disassembler {
             return false
         }
         if matchParameters(instructionValue: memory[currentLocation]) == true {
-            var parameters = Instructions[instruction(rawValue: currentLocation)!]!
+            var parameters = Instructions[instruction(rawValue: memory[currentLocation])!]!
             var d = ""
-            d = "\(instruction(rawValue: currentLocation)!)"  //it is fine to unwrap because matchParameters already checks for valid instruction
+            if (returnLabelFromMemoryLocation(currentLocation + startLocation) != nil) {
+                d += "\(returnLabelFromMemoryLocation(currentLocation + startLocation)!): "
+            }
+            if d == "" {
+                d += "    "
+            }
+            d += "\(instruction(rawValue: memory[currentLocation])!)"  //it is fine to unwrap because matchParameters already checks for valid instruction
             currentLocation += 1
             for i in 0..<parameters.count {
                 //add parameters
@@ -99,7 +109,7 @@ class Disassembler {
             resultLines.append(d)
             return true
         } else {
-            return false
+            return false    ///Users/201125401/Documents/SAP/
         }
     }
     func convertBinaryToAssembly() {
@@ -107,9 +117,6 @@ class Disassembler {
         resultLines = [];
         while currentLocation < memory.count {
             if lineToAssembly() == false {
-                for i in resultLines {
-                    print("    " + i)
-                }
                 return
             }
         }

@@ -14,6 +14,7 @@ class UI {
         print("Path set to \(path)")
     }
     func assemble(program: String) {
+        assembler = Assembler();
         if path == "" {
             print("Error: path is unset")
             return;
@@ -59,21 +60,21 @@ class UI {
         return;
     }
     func printHelp() {
-        print("""
-                                  SAP Help
-                                  --------
-        path <path>                 set the path for the SAP program directory
-                                     * include the final \"/\" but, but
-                                       DO NOT include name of file.
-                                       SAP file must have an extension of .txt
-        asm <program name>          assemble the specified program
-        run <program name>          run the specified program
-        printlst <program name>     print listing file for the specified program
-        printbin <program name>     print binary file for the specified program
-        printsym <program name>     print symbol table for the specified program
-        quit                        terminate SAP program
-        help                        print this
-        """)
+//        print("""
+//                                  SAP Help
+//                                  --------
+//        path <path>                 set the path for the SAP program directory
+//                                     * include the final \"/\" but, but
+//                                       DO NOT include name of file.
+//                                       SAP file must have an extension of .txt
+//        asm <program name>          assemble the specified program
+//        run <program name>          run the specified program
+//        printlst <program name>     print listing file for the specified program
+//        printbin <program name>     print binary file for the specified program
+//        printsym <program name>     print symbol table for the specified program
+//        quit                        terminate SAP program
+//        help                        print this
+//        """)
     }
     func run() {
         print("Welcome to SAP!")

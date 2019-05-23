@@ -112,8 +112,6 @@ class Debugger {
         }
     }
     func help() {
-        print("DEBUGGER HELP ACTIVATED")
-        /*
         print("""
                                     Commands:
                                    -----------
@@ -135,7 +133,6 @@ class Debugger {
         exit                                terminate virtual machine
         help                                print this help table
         """)
-*/
     }
     func run() {
         while true {

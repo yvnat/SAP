@@ -31,9 +31,9 @@ class Disassembler {
             return false
         }
     }
-    //this takes in the value of the instruction (ie 0 for halt) and returns whether the things after it work as arguments
+    //this takes in the value of the instruction (i.e. 0 for halt) and returns whether the things after it work as arguments
     func matchParameters(instructionValue: Int)->Bool {
-        var opt_instruction = instruction(rawValue: instructionValue)
+        let opt_instruction = instruction(rawValue: instructionValue)
         //if not valid instruction, return false
         if opt_instruction == nil {
             print("Disassembly error: no instruction #\(instructionValue)")
@@ -46,7 +46,7 @@ class Disassembler {
                 print("Disassmebly error: memory bounds end within expected parameters")
                 return false;
             }
-            //if parameters dont make sense, return false
+            //if parameters don't make sense, return false
             if givenParameter(parameters[i], memory[currentLocation + i + 1]) == false {
                 print("Disassembly error: parameters invalid at \(currentLocation) for instruction \(opt_instruction!) (expected \(parameters[i]), got \(memory[currentLocation + i + 1])))")
                 return false
@@ -59,9 +59,16 @@ class Disassembler {
         case .Register:
             return "r\(value)"
         case .Label:
-            for i in symbolTable {
-                if i.value == value {
-                    return i.key
+            //for i in symbolTable {
+                //if i.value == value {
+                    //return i.key
+                //}
+            //}
+            for i in symbolTable.keys {
+                if symbolTable[i] == value {
+                    //DEBUGGING
+                    print("Label: \(i)")
+                    return i
                 }
             }
             print("UNEXPECTED ERROR CANNOT FIND LABEL")
@@ -77,22 +84,22 @@ class Disassembler {
     func lineToAssembly()->Bool {
         if (currentLocation >= memory.count) {
             print("Disassembly error: location out of bounds")
-            return false;
+            return false
         }
         if matchParameters(instructionValue: memory[currentLocation]) == true {
-            var parameters = Instructions[instruction(rawValue: currentLocation)!]!;
+            var parameters = Instructions[instruction(rawValue: currentLocation)!]!
             var d = ""
             d = "\(instruction(rawValue: currentLocation)!)"  //it is fine to unwrap because matchParameters already checks for valid instruction
             currentLocation += 1
-            for i in 0..<(parameters.count) {
+            for i in 0..<parameters.count {
                 //add parameters
-                d += " " + valueToString(value: memory[currentLocation], type: parameters[i]);
+                d += " " + valueToString(value: memory[currentLocation], type: parameters[i])
                 currentLocation += 1
             }
             resultLines.append(d)
-            return true;
+            return true
         } else {
-            return false;
+            return false
         }
     }
     func convertBinaryToAssembly() {
@@ -103,11 +110,11 @@ class Disassembler {
                 for i in resultLines {
                     print("    " + i)
                 }
-                return;
+                return
             }
         }
-        for i in resultLines {
-            print(i)
+        for line in resultLines {
+            print(line)
         }
     }
 }

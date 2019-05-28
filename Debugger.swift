@@ -110,29 +110,29 @@ class Debugger {
         }
     }
     func help() {
-//        print("""
-//                                    Commands:
-//                                   -----------
-//        setbk <address>                     set breakpoint at <address>
-//        rmbk <address>                      remove breakpoint at <address>
-//        clrbk                               clear all breakpoints
-//        disbk                               temporarily disable all breakpoints
-//        enbk                                enable breakpoints
-//        pbk                                 print breakpoint table
-//        preg                                print registers
-//        wreg <number> <value>               write value of register <number> to <value?
-//        wpc <value>                         change value of PC to <value>
-//        pmem <start address> <end address>  print memory locations
-//        deas <start address> <end address>  deassemble memory locations
-//        wmem <address> <value>              change value of memory at <address> to <value>
-//        pst                                 print symbol table
-//        g                                   continue program execution
-//        s                                   single step
-//        exit                                terminate virtual machine
-//        help                                print this help table
-//
-//            *Any address can be given either as a label or an integer*
-//        """)
+        print("""
+                                    Commands:
+                                   -----------
+        setbk <address>                     set breakpoint at <address>
+        rmbk <address>                      remove breakpoint at <address>
+        clrbk                               clear all breakpoints
+        disbk                               temporarily disable all breakpoints
+        enbk                                enable breakpoints
+        pbk                                 print breakpoint table
+        preg                                print registers
+        wreg <number> <value>               write value of register <number> to <value?
+        wpc <value>                         change value of PC to <value>
+        pmem <start address> <end address>  print memory locations
+        deas <start address> <end address>  deassemble memory locations
+        wmem <address> <value>              change value of memory at <address> to <value>
+        pst                                 print symbol table
+        g                                   continue program execution
+        s                                   single step
+        exit                                terminate virtual machine
+        help                                print this help table
+
+            *Any address can be given either as a label or an integer*
+        """)
     }
     func run() {
         while true {
@@ -301,7 +301,7 @@ class Debugger {
             let lines = contents.components(separatedBy: "\n")
             var symbols: [[String]] = [];
             for i in lines {
-                symbols.append(i.components(separatedBy: ":"));
+                symbols.append(i.components(separatedBy: " "));
             }
             for i in symbols {
                 //ensure that all sections of the file are either valid or empty

@@ -6,7 +6,16 @@ func splitStringIntoParts(expression: String)->[String]{
 func splitStringIntoLines(expression: String)->[String]{
     return expression.characters.split{$0 == "\r" || $0 == "\n"}.map{ String($0) }
 }
+class LST {
+    var string: String
+    var tokens: [Token]
+    init(string: String) {
+        self.string = string;
+        tokens = [];
+    }
+}
 class Assembler {
+    var lst: [LST] = [];
     static var instructionParameters: [instruction : [TokenType]] = [
         .halt:[],
         .clrr:[.Register],
@@ -82,8 +91,6 @@ class Assembler {
     var wasEnded = false;   //set to true if encounters the .end directive
     var arrayOfLines: [String] = []
     var error = 1
-    //WE NEED ERROR CHECKING
-    //HINT FROM MR.STULIN:
     func loadProgram(_ program: [String]) {
         for i in 0..<program.count{
             arrayOfLines[i] = program[i]
@@ -99,9 +106,11 @@ class Assembler {
     func addStringToMemory(_ token: Token) {
         //SWIFT 4: program.append(Token(type: TokenType.Data, intValue: token.stringValue!.count, stringValue: nil, tupleValue: nil))
         program.append(Token(type: TokenType.Data, intValue: token.stringValue!.characters.count, stringValue: nil, tupleValue: nil))
+        lst[lst.count - 1].tokens.append(Token(type: TokenType.Data, intValue: token.stringValue!.characters.count, stringValue: nil, tupleValue: nil))
         //SWIFT 4: for i in token.stringValue! {
         for i in token.stringValue!.characters {
             program.append(Token(type: TokenType.Data, intValue: characterToUnicodeValue(i), stringValue: nil, tupleValue: nil))
+            lst[lst.count - 1].tokens.append(Token(type: TokenType.Data, intValue: characterToUnicodeValue(i), stringValue: nil, tupleValue: nil))
         }
     }
     //takes r or l, returns 1 or 0
@@ -112,18 +121,24 @@ class Assembler {
     func addTupleToMemory(_ token: Token) {
         let tuple = token.tupleValue!;
         program.append(Token(type: TokenType.Data, intValue: tuple.state, stringValue: nil, tupleValue: nil));
+        lst[lst.count - 1].tokens.append(Token(type: TokenType.Data, intValue: tuple.state, stringValue: nil, tupleValue: nil))
         program.append(Token(type: TokenType.Data, intValue: characterToUnicodeValue(tuple.input), stringValue: nil, tupleValue: nil));
+        lst[lst.count - 1].tokens.append(Token(type: TokenType.Data, intValue: characterToUnicodeValue(tuple.input), stringValue: nil, tupleValue: nil))
         program.append(Token(type: TokenType.Data, intValue: tuple.nextState, stringValue: nil, tupleValue: nil));
+        lst[lst.count - 1].tokens.append(Token(type: TokenType.Data, intValue: tuple.nextState, stringValue: nil, tupleValue: nil))
         program.append(Token(type: TokenType.Data, intValue: characterToUnicodeValue(tuple.write), stringValue: nil, tupleValue: nil));
+        lst[lst.count - 1].tokens.append(Token(type: TokenType.Data, intValue: characterToUnicodeValue(tuple.write), stringValue: nil, tupleValue: nil))
         program.append(Token(type: TokenType.Data, intValue: convertDirToBool(tuple.dir), stringValue: nil, tupleValue: nil));
+        lst[lst.count - 1].tokens.append(Token(type: TokenType.Data, intValue: convertDirToBool(tuple.dir), stringValue: nil, tupleValue: nil))
     }
     func allocateMemory(_ token: Token) {
         for _ in 0..<token.intValue! {
             program.append(Token(type: TokenType.Data, intValue: 0, stringValue: nil, tupleValue: nil))
+            lst[lst.count - 1].tokens.append(Token(type: TokenType.Data, intValue: 0, stringValue: nil, tupleValue: nil))
         }
     }
     //this function takes a line and verifies that it is correct
-    func verifyLine(_ line: [Token], _ lineNumber: Int)->Bool {
+    func verifyLine(_ line: [Token], _ lineNumber: Int, _ lineAsString: String)->Bool {
         //an empty line is always correct
         if (line.count == 0) {
             return true;
@@ -153,6 +168,10 @@ class Assembler {
             var parameters = Assembler.instructionParameters[instruction(rawValue: instructionType)!]!
             //add the instruction to the program, then move to parameters
             program.append(line[index])
+//            lst[lineAsString] = [Token(type: TokenType.Data, intValue: lineNumber, stringValue: nil, tupleValue: nil)]
+//            lst[lineAsString]!.append(line[index])
+            lst.append(LST(string: lineAsString))
+            lst[lst.count - 1].tokens.append(line[index])
             index += 1;
             //loop through parameters, ensuring they match expected ones
             while (index < line.count && i < parameters.count) {
@@ -168,6 +187,7 @@ class Assembler {
                 }
                 //handle program and memory
                 program.append(line[index]);
+                lst[lst.count - 1].tokens.append(line[index])
                 index += 1;
                 i += 1;
             }
@@ -189,6 +209,7 @@ class Assembler {
             let directiveType = line[index].stringValue!
             var parameters = directiveParameters[directiveType]!
             index += 1;
+            lst.append(LST(string: lineAsString))
             //immediately stop on .end
             if (directiveType == ".end") {
                 wasEnded = true;
@@ -218,6 +239,7 @@ class Assembler {
                 }
                 if (directiveType == ".integer") {
                     program.append(line[index])
+                    lst[lst.count - 1].tokens.append(line[index])
                 }
                 if (directiveType == ".start") {
                     startLocation = line[index].stringValue!;
@@ -236,8 +258,7 @@ class Assembler {
             }
             //if nothing is wrong, line is correct
             return true;
-        }
-        else {
+        } else {
             errors += "[Line \(lineNumber)] expected token #\(index + 1) to be instruction or directive; instead, it is \(line[index].description)\n";
             return false;
         }
@@ -250,7 +271,7 @@ class Assembler {
         /////////////pass one: get tokens, verify that they make sense
         for i in 0..<lines.count {
             let tokens = tokenizer.Tokenize(lines[i]);
-            verifyLine(tokens, i + 1);
+            verifyLine(tokens, i + 1, lines[i]);
             if (wasEnded) {
                 break;
             }
@@ -292,9 +313,38 @@ class Assembler {
     func symbolsTableToString()->String {
         var s = ""
         for i in symbolsTable {
-            s += "\(i.key):\(i.value)\n";
+            s += "\(i.key) \(i.value)\n";
         }
         return s;
+    }
+    func createSuccessfulLST()->String {
+        var lstString: [String] = [];
+        for k in 0..<lst.count {
+            let i = lst[k];
+            lstString.append("\(k): ");
+            for j in 0..<i.tokens.count {
+                if j >= 4 {
+                    lstString[lstString.count - 1] += "..."
+                    break;
+                }
+                if (i.tokens[j].intValue == nil) {
+                    lstString[lstString.count - 1] += "\(symbolsTable[i.tokens[j].stringValue!]!)" + " "
+                } else {
+                    lstString[lstString.count - 1] += "\(i.tokens[j].intValue!)" + " "
+                }
+            }
+            while lstString[lstString.count - 1].count < 19 + 4 {
+                lstString[lstString.count - 1] += " "
+            }
+//            print("    ", terminator: "")
+            lstString[lstString.count - 1] += i.string + "\n";
+//            print(lstString[lstString.count - 1]);
+        }
+        var ret = "";
+        for i in lstString {
+            ret += i
+        }
+        return ret;
     }
     //take a path to the code, output the files
     func assemble(path: String)->Bool {
@@ -315,6 +365,7 @@ class Assembler {
             }
             try assembledProgram.write(toFile: "\(path).bin", atomically: false, encoding: .utf8)
             try symbolsTableToString().write(toFile: "\(path).sym", atomically: false, encoding: .utf8)
+            try createSuccessfulLST().write(toFile: "\(path).lst", atomically: false, encoding: .utf8)
             print("Assembly successful.")
             return true;
         }

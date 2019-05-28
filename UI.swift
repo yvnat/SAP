@@ -31,7 +31,7 @@ class UI {
     }
     func printLst(program: String) {
         do {
-            let contents = try String(contentsOfFile: "\(path).lst", encoding: String.Encoding.utf8);
+            let contents = try String(contentsOfFile: "\(path)\(program).lst", encoding: String.Encoding.utf8);
             print(contents);
         }
         catch {
@@ -60,21 +60,21 @@ class UI {
         return;
     }
     func printHelp() {
-//        print("""
-//                                  SAP Help
-//                                  --------
-//        path <path>                 set the path for the SAP program directory
-//                                     * include the final \"/\" but, but
-//                                       DO NOT include name of file.
-//                                       SAP file must have an extension of .txt
-//        asm <program name>          assemble the specified program
-//        run <program name>          run the specified program
-//        printlst <program name>     print listing file for the specified program
-//        printbin <program name>     print binary file for the specified program
-//        printsym <program name>     print symbol table for the specified program
-//        quit                        terminate SAP program
-//        help                        print this
-//        """)
+        print("""
+                                  SAP Help
+                                  --------
+        path <path>                 set the path for the SAP program directory
+                                     * include the final \"/\" but, but
+                                       DO NOT include name of file.
+                                       SAP file must have an extension of .txt
+        asm <program name>          assemble the specified program
+        run <program name>          run the specified program
+        printlst <program name>     print listing file for the specified program
+        printbin <program name>     print binary file for the specified program
+        printsym <program name>     print symbol table for the specified program
+        quit                        terminate SAP program
+        help                        print this
+        """)
     }
     func run() {
         print("Welcome to SAP!")
@@ -115,6 +115,9 @@ class UI {
             case "help":
                 if splitInput.count != 1 {print("Incorrect number of arguments for command. Type \"help\" for a list of commands.");continue}
                 printHelp()
+            case "@deb1":   //because setting the path every time gets so tedious
+                setPath(newpath: "/Users/romaphile/Desktop/");
+                break;
             default:
                 print("Unknown command \"\(splitInput[0])\". Type \"help\" for a list of commands")
             }
